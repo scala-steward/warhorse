@@ -268,7 +268,11 @@ jobs:
 
 workflows:
   version: 2
+
   build:
+    - run:
+        command:
+          - sudo chmod +x /usr/local/bin/sbt
     jobs:
       - lint:
           filters:
