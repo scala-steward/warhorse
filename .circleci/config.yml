@@ -19,6 +19,10 @@ machine_ubuntu: &machine_ubuntu
   machine:
     image: ubuntu-1604:201903-01
 
+sudo_sbt: &sudo_sbt
+  - run:
+      command: sudo chmod +x ./sbt
+
 install_jdk: &install_jdk
   - run:
       name: Install JDK
@@ -95,18 +99,20 @@ compile: &compile
   steps:
     - checkout
     - <<: *load_cache
+    - <<: *sudo_sbt
     - run:
         name: Compile code
-        command: sudo ./sbt ++${SCALA_VERSION}! compile
+        command: ./sbt ++${SCALA_VERSION}! compile
     - <<: *save_cache
 
 lint: &lint
   steps:
     - checkout
     - <<: *load_cache
+    - <<: *sudo_sbt
     - run:
         name: Lint code
-        command: sudo ./sbt ++${SCALA_VERSION}! check
+        command: ./sbt ++${SCALA_VERSION}! check
     - <<: *save_cache
 
 # mdoc: &mdoc
@@ -125,9 +131,10 @@ test: &test
     - checkout
     - <<: *load_cache
     - <<: *install_jdk
+    - <<: *sudo_sbt
     - run:
         name: Run tests
-        command: sudo ./sbt ++${SCALA_VERSION}! test
+        command: ./sbt ++${SCALA_VERSION}! test
     - <<: *save_cache
 
 # release: &release
