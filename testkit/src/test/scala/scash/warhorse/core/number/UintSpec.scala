@@ -23,7 +23,7 @@ object UintSpec extends DefaultRunnableSpec {
     testM(">>")(check(gen.uint8, Gen.int(0, 100)) {
       case (u, i) =>
         val r        = u >> i
-        val expected = if (i > 31) Uint8.min else Uint8((u.num.toLong >> i).toInt)
+        val expected = if (i > 31) Uint8.min else Uint8(u.num >> i)
         assert(r)(equalTo(expected))
     }),
     suite("serdes")(

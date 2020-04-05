@@ -6,7 +6,10 @@ import scala.math.BigInt
 
 package object number {
   def pow2(exponent: Int): BigInt = {
-    require(exponent < 64, "We cannot have anything larger than 2^64 - 1 in a long, you tried to do 2^" + exponent)
+    if (exponent < 64)
+      new IllegalArgumentException(
+        "We cannot have anything larger than 2^64 - 1 in a long, you tried to do 2^" + exponent
+      )
     BigInt(1) << exponent
   }
 
