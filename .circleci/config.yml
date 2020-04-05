@@ -22,7 +22,7 @@ machine_ubuntu: &machine_ubuntu
 install_sbt: &install_sbt
   - run:
       name: Install sbt
-      command: sudo ./sbt
+      command: sudo sbt
 
 install_jdk: &install_jdk
   - run:
