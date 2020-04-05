@@ -19,10 +19,6 @@ machine_ubuntu: &machine_ubuntu
   machine:
     image: ubuntu-1604:201903-01
 
-go_sudo: &go_sudo
-  - run:
-      command: sudo chmod +x /usr/local/bin/sbt
-
 install_jdk: &install_jdk
   - run:
       name: Install JDK
@@ -108,6 +104,9 @@ lint: &lint
   steps:
     - checkout
     - <<: *load_cache
+    - run:
+        name: sudo sbt
+        command: sudo chmod +x /usr/local/bin/sbt
     - run:
         name: Lint code
         command: ./sbt ++${SCALA_VERSION}! check
@@ -195,7 +194,6 @@ test: &test
 jobs:
   lint:
     <<: *lint
-    <<: *go_sudo
     <<: *machine_ubuntu
     environment:
       - <<: *scala_212
