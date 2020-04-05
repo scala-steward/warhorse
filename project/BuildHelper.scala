@@ -22,7 +22,8 @@ object BuildHelper {
     "-Ywarn-value-discard",
     "-unchecked",
     "-deprecation",
-    "-Xfatal-warnings"
+    "-Xfatal-warnings",
+    "-Yno-predef"
   )
 
   private val stdOpts213 = Seq(

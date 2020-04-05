@@ -8,6 +8,6 @@ import zio.test.{ assert, suite, test, DefaultRunnableSpec }
 
 object CNumericSpec extends DefaultRunnableSpec {
   val spec = suite("CNumericSpec")(
-    test("add")(assert(Uint8(4) add BigInt(5))(equalTo(Uint8(9))))
+    test("add")(assert(Uint8(4) + BigInt(5))(equalTo(Uint8(9))))
   )
 }
