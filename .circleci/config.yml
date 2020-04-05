@@ -106,10 +106,10 @@ lint: &lint
     - <<: *load_cache
     - run:
         name: sudo sbt
-        command: sudo chmod +x /usr/local/bin/sbt
+        command: sudo chmod +x ./sbt
     - run:
         name: Lint code
-        command: ./sbt ++${SCALA_VERSION}! check
+        command:./sbt ++${SCALA_VERSION}! check
     - <<: *save_cache
 
 mdoc: &mdoc
