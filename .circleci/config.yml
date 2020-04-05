@@ -19,6 +19,11 @@ machine_ubuntu: &machine_ubuntu
   machine:
     image: ubuntu-1604:201903-01
 
+install_sbt: &install_sbt
+  - run:
+      name: Install sbt
+      command: sudo ./sbt
+
 install_jdk: &install_jdk
   - run:
       name: Install JDK
@@ -95,6 +100,7 @@ compile: &compile
   steps:
     - checkout
     - <<: *load_cache
+    - <<: *install_sbt
     - run:
         name: Compile code
         command: ./sbt ++${SCALA_VERSION}! compile
@@ -104,30 +110,29 @@ lint: &lint
   steps:
     - checkout
     - <<: *load_cache
-    - run:
-        name: sudo sbt
-        command: sudo chmod +x ./sbt
+    - <<: *install_sbt
     - run:
         name: Lint code
         command: ./sbt ++${SCALA_VERSION}! check
     - <<: *save_cache
 
-mdoc: &mdoc
-  steps:
-    - checkout
-    - <<: *load_cache
-    - run:
-        name: Generate documentation
-        command: |
-          ./sbt doc
-          ./sbt ++${SCALA_VERSION}! docs/mdoc
-    - <<: *save_cache
+# mdoc: &mdoc
+#   steps:
+#     - checkout
+#     - <<: *load_cache
+#     - run:
+#         name: Generate documentation
+#         command: |
+#           ./sbt doc
+#           ./sbt ++${SCALA_VERSION}! docs/mdoc
+#     - <<: *save_cache
 
 test: &test
   steps:
     - checkout
     - <<: *load_cache
     - <<: *install_jdk
+    - <<: *install_sbt
     - run:
         name: Run tests
         command: ./sbt ++${SCALA_VERSION}! test
@@ -206,12 +211,12 @@ jobs:
   #     - <<: *scala_dotty
   #     - <<: *jdk_8
 
-  mdoc:
-    <<: *mdoc
-    <<: *machine_ubuntu
-    environment:
-      - <<: *scala_212
-      - <<: *jdk_8
+#  mdoc:
+#    <<: *mdoc
+#    <<: *machine_ubuntu
+#    environment:
+#      - <<: *scala_212
+#      - <<: *jdk_8
 
   test_212_jdk8_jvm:
     <<: *test
@@ -276,11 +281,11 @@ workflows:
       - lint:
           filters:
             <<: *filter_tags
-      - mdoc:
-          requires:
-            - lint
-          filters:
-            <<: *filter_tags
+#      - mdoc:
+#          requires:
+#            - lint
+#          filters:
+#            <<: *filter_tags
       - test_212_jdk8_jvm:
           requires:
             - lint
