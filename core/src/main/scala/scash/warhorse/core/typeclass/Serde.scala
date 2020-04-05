@@ -15,5 +15,10 @@ trait SerdeSyntax {
 
   implicit class ByteVectorOps(byteVector: ByteVector) {
     def decode[A: Codec]: A = Serde[A].decode(byteVector.bits).require.value
+    def decodeExactly[A: Codec]: A = {
+      val a = Serde[A].decode(byteVector.bits).require
+      if (a.remainder.isEmpty) a.value
+      else throw new IllegalArgumentException(s"Decoding left remainder bits: ${a.remainder.toByteVector.size}")
+    }
   }
 }

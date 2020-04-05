@@ -26,7 +26,7 @@ trait CNumeric[A] {
   //https://stackoverflow.com/questions/47519140/bitwise-shift-right-with-long-not-equaling-zero/47519728#47519728
   def shiftR(a: A, a1: Int): A =
     if (a1.toLong > 63) apply(0)
-    else apply((num(a) << a1) & andMask)
+    else apply(num(a) >> a1)
 }
 
 object CNumeric {
