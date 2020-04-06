@@ -7,6 +7,7 @@ import zio.test.Assertion.equalTo
 import zio.test.{ assert, suite, test, DefaultRunnableSpec }
 
 object CNumericSpec extends DefaultRunnableSpec {
+  //TODO: Add Laws
   val spec = suite("CNumericSpec")(
     test("add")(assert(Uint8(4) + BigInt(5))(equalTo(Uint8(9))))
   )
