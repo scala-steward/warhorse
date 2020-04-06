@@ -22,6 +22,6 @@ object Uint8 {
   implicit val uint8Codec: Codec[Uint8] = uint8L.xmap(apply(_), _.num)
 
   implicit val uint8Numeric: CNumeric[Uint8] =
-    CNumeric[Uint8](0xFF)(_.num, n => apply(n.toInt))
+    CNumeric[Uint8](0xFF, min, max)(_.num, n => apply(n.toInt))
 
 }
