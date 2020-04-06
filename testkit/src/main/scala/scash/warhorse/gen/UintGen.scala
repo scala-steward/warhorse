@@ -1,6 +1,6 @@
 package scash.warhorse.gen
 
-import scash.warhorse.core.number.{ Uint32, Uint8 }
+import scash.warhorse.core.number.{ Uint32, Uint64, Uint8 }
 import zio.test.Gen
 
 trait UintGen {
@@ -21,7 +21,7 @@ trait UintGen {
   def uint32 = Gen.long(Uint32.min.num, Uint32.max.num).map(Uint32(_))
 
   /** Generates a random uint32 */
-  //def uint64 = positiveBigInts.filter(_ < (BigInt(1) << 64)).map(Uint64(_))
+  def uint64 = positiveBigInts.filter(_ < (BigInt(1) << 64)).map(Uint64(_))
 
   /** Chooses a BigInt in the ranges of 0 <= bigInt < 2^^64 */
   def bigInts = Gen.long(Long.MinValue, Long.MaxValue).map(n => BigInt(n) + BigInt(2).pow(63))
