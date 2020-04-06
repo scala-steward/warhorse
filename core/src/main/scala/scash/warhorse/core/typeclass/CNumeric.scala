@@ -87,6 +87,7 @@ trait CNumericSyntax {
     def <[A1: CNumeric](num: A1): Boolean   = CNumeric[A].lt(a, num)
     def <=[A1: CNumeric](num: A1): Boolean  = CNumeric[A].lte(a, num)
     def ===[A1: CNumeric](num: A1): Boolean = CNumeric[A].eq(a, num)
+    def !==[A1: CNumeric](num: A1): Boolean = CNumeric[A].eq(a, num)
     def <<(num: Int): A                     = CNumeric[A].shiftL(a, num)
     def >>(num: Int): A                     = CNumeric[A].shiftR(a, num)
 
