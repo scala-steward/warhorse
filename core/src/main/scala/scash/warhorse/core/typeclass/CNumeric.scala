@@ -50,13 +50,13 @@ object CNumeric {
     underylingIdentityLaw(a1, a2) && underylingIdentityLaw(a2, a1)
 
   def additiveIdentityLaw[A: CNumeric](a: A): Boolean =
-    CNumeric[A].num(a) + CNumeric[A].lift(BigInt(0)) == CNumeric[A].num(a)
+    a + CNumeric[A].lift(BigInt(0)) === a
 
   def subtractiveIdentityLaw[A: CNumeric](a: A): Boolean =
-    CNumeric[A].num(a) - CNumeric[A].lift(BigInt(0)) == CNumeric[A].num(a)
+    a - CNumeric[A].lift(BigInt(0)) === a
 
   def multiplicativeIdentityLaw[A: CNumeric](a: A): Boolean =
-    CNumeric[A].num(a) * CNumeric[A].lift(BigInt(1)) == CNumeric[A].num(a)
+    a * CNumeric[A].lift(BigInt(1)) === a
 
   def underylingIdentityLaw[A: CNumeric, A1: CNumeric](a1: A, a2: A1): Boolean =
     !(a1 === a2) || (CNumeric[A].num(a1) == CNumeric[A1].num(a2))
