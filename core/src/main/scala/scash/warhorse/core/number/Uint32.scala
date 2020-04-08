@@ -9,9 +9,13 @@ import scala.util.Try
 protected case class Uint32(num: Long) extends AnyVal
 
 object Uint32 {
-  def apply(long: Long): Uint32 = new Uint32(verify(long)(min, max))
+  def apply(n: Long): Uint32 = new Uint32(verify(n)(min, max))
 
-  def safe(long: Long): Option[Uint32] = Try(apply(long)).toOption
+  def apply(n: Int): Uint32 = apply(n.toLong)
+
+  def apply(n: BigInt): Uint32 = new Uint32(verify(n)(min, max).toLong)
+
+  def safe(n: Long): Option[Uint32] = Try(apply(n)).toOption
 
   val min  = new Uint32(0)
   val zero = min
@@ -21,5 +25,5 @@ object Uint32 {
   implicit val uint32Codec: Codec[Uint32] = uint32L.xmap[Uint32](apply(_), _.num)
 
   implicit val uint32Numeric: CNumeric[Uint32] =
-    CNumeric[Uint32](0xFFFFFFFFL, min, max)(_.num, l => apply(l.toLong))
+    CNumeric[Uint32](0xFFFFFFFFL, min, max)(_.num, apply(_))
 }

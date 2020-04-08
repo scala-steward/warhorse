@@ -1,6 +1,6 @@
 package scash.warhorse.gen
 
-import scash.warhorse.core.number.{ Uint32, Uint8 }
+import scash.warhorse.core.number.{ Uint32, Uint64, Uint8 }
 import zio.test.Gen
 
 trait UintGen {
