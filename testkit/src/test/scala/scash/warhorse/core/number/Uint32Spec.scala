@@ -16,7 +16,7 @@ object Uint32Spec extends DefaultRunnableSpec {
   val spec = suite("Uint32")(
     suite("CNumeric")(
       testM("shiftL")(check(gen.uint32, Gen.int(0, 32))(shiftL)),
-      testM("shiftR")(check(gen.uint32, Gen.int(0, 100))(shiftR(_, _, 64))),
+      testM("shiftR")(check(gen.uint32, Gen.int(0, 100))(shiftR)),
       testM("sum")(check(gen.uint32, gen.uint32)(sum)),
       testM("substract")(check(gen.uint32, gen.uint32)(substract)),
       testM("multiply")(check(gen.uint32, gen.uint32)(mult)),

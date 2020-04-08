@@ -16,7 +16,7 @@ object Uint8Spec extends DefaultRunnableSpec {
   val spec = suite("Uint8")(
     suite("CNumeric")(
       testM("shiftL")(check(gen.uint8, Gen.int(0, 8))(shiftL)),
-      testM("shiftR")(check(gen.uint8, Gen.int(0, 100))(shiftR(_, _, 32))),
+      testM("shiftR")(check(gen.uint8, Gen.int(0, 100))(shiftR)),
       testM("sum")(check(gen.uint8, gen.uint8)(sum)),
       testM("substract")(check(gen.uint8, gen.uint8)(substract)),
       testM("multiply")(check(gen.uint8, gen.uint8)(mult)),

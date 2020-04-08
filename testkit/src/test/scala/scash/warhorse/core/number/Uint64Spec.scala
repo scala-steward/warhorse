@@ -15,7 +15,7 @@ object Uint64Spec extends DefaultRunnableSpec {
   val spec = suite("Uint64")(
     suite("CNumeric")(
       testM("shiftL")(check(gen.uint64, Gen.int(0, 64))(shiftL)),
-      testM("shiftR")(check(gen.uint64, Gen.int(0, 100))(shiftR(_, _, 128))),
+      testM("shiftR")(check(gen.uint64, Gen.int(0, 100))(shiftR)),
       testM("sum")(check(gen.uint64, gen.uint64)(sum)),
       testM("substract")(check(gen.uint64, gen.uint64)(substract)),
       testM("multiply")(check(gen.uint64, gen.uint64)(mult)),

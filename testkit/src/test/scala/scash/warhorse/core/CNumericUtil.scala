@@ -12,38 +12,41 @@ object CNumericUtil {
   def equalTo_[A: CNumeric](expected: A): Assertion[A] =
     Assertion.assertion("equalTo")(param(expected))(_ === expected)
 
+  def inRange[A: CNumeric](u: BigInt): Boolean = {
+    val C = CNumeric[A]
+    C.num(C.min) <= u && u <= C.num(C.max)
+  }
+
   def shiftL[A: CNumeric](u: A, i: Int) = {
     val Cnum     = CNumeric[A]
     val expected = (Cnum.num(u) << i) & Cnum.andMask
-    if (Cnum.max > expected) assert(u << i)(equalTo(Cnum.lift(expected)))
+    if (inRange[A](expected)) assert(u << i)(equalTo(Cnum.lift(expected)))
     else assert(Try(u << i).isFailure)(isTrue)
   }
 
-  def shiftR[A: CNumeric](u: A, i: Int, size: Int) = {
-    val Cnum = CNumeric[A]
-    val r    = u >> i
-    val expected =
-      if (i >= size) Cnum.min
-      else Cnum.lift(Cnum.num(u) >> i)
+  def shiftR[A: CNumeric](u: A, i: Int) = {
+    val Cnum     = CNumeric[A]
+    val r        = u >> i
+    val expected = Cnum.lift(Cnum.num(u) >> i)
     assert(r)(equalTo_(expected))
   }
 
   def sum[A: CNumeric](u1: A, u2: A) = {
     val expected = CNumeric[A].num(u1) + CNumeric[A].num(u2)
-    if (expected > CNumeric[A].num(CNumeric[A].max)) assert(Try(u1 + u2).isFailure)(isTrue)
-    else assert(u1 + u2)(equalTo_(CNumeric[A].lift(expected)))
+    if (inRange[A](expected)) assert(u1 + u2)(equalTo_(CNumeric[A].lift(expected)))
+    else assert(Try(u1 + u2).isFailure)(isTrue)
   }
 
   def substract[A: CNumeric](u1: A, u2: A) = {
     val expected = CNumeric[A].num(u1) - CNumeric[A].num(u2)
-    if (expected < CNumeric[A].num(CNumeric[A].min)) assert(Try(u1 - u2).isFailure)(isTrue)
-    else assert(u1 - u2)(equalTo_(CNumeric[A].lift(expected)))
+    if (inRange[A](expected)) assert(u1 - u2)(equalTo_(CNumeric[A].lift(expected)))
+    else assert(Try(u1 - u2).isFailure)(isTrue)
   }
 
   def mult[A: CNumeric](u1: A, u2: A) = {
     val expected = CNumeric[A].num(u1) * CNumeric[A].num(u2)
-    if (expected > CNumeric[A].num(CNumeric[A].max)) assert(Try(u1 * u2).isFailure)(isTrue)
-    else assert(u1 * u2)(equalTo_(CNumeric[A].lift(expected)))
+    if (inRange[A](expected)) assert(u1 * u2)(equalTo_(CNumeric[A].lift(expected)))
+    else assert(Try(u1 * u2).isFailure)(isTrue)
   }
 
   def bitwiseInclusive[A: CNumeric](u1: A, u2: A) =
