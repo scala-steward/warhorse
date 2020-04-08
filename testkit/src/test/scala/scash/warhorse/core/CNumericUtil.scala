@@ -30,10 +30,8 @@ object CNumericUtil {
 
   def sum[A: CNumeric](u1: A, u2: A) = {
     val expected = CNumeric[A].num(u1) + CNumeric[A].num(u2)
-    if (expected > CNumeric[A].num(CNumeric[A].max)) {
-      if (Try(u1 + u2).isSuccess) Predef.println(s"u1 $u1 u2 $u2 sum ${u1 + u2}")
-      assert(Try(u1 + u2).isFailure)(isTrue)
-    } else assert(u1 + u2)(equalTo_(CNumeric[A].lift(expected)))
+    if (expected > CNumeric[A].num(CNumeric[A].max)) assert(Try(u1 + u2).isFailure)(isTrue)
+    else assert(u1 + u2)(equalTo_(CNumeric[A].lift(expected)))
   }
 
   def substract[A: CNumeric](u1: A, u2: A) = {
