@@ -4,8 +4,6 @@ import scash.warhorse.core.typeclass.CNumeric
 import scodec.Codec
 import scodec.codecs.int32L
 
-import scala.util.Try
-
 protected case class Int32(num: Int) extends AnyVal
 
 object Int32 {
@@ -13,7 +11,7 @@ object Int32 {
 
   def apply(n: BigInt): Int32 = new Int32(verify(n)(min, max).toInt)
 
-  def safe(bigInt: Int): Option[Int32] = Try(apply(bigInt)).toOption
+  def safe(bigInt: BigInt): Option[Int32] = CNumeric.safe[Int32](bigInt)
 
   val min  = new Int32(-2147483648)
   val zero = new Int32(0)

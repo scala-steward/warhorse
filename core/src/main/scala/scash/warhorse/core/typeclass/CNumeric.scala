@@ -1,6 +1,6 @@
 package scash.warhorse.core.typeclass
 
-import scash.warhorse.core._
+import scala.util.Try
 
 trait CNumeric[A] {
   def andMask: BigInt
@@ -31,7 +31,7 @@ trait CNumeric[A] {
 }
 
 object CNumeric {
-
+  /*
   def consistencyLaw[A: CNumeric](a: A): Boolean =
     CNumeric[A].lift(CNumeric[A].num(a)) === a
 
@@ -59,7 +59,7 @@ object CNumeric {
 
   def transitivityLaw[A1: CNumeric, A2: CNumeric, A3: CNumeric](a1: A1, a2: A2, a3: A3): Boolean =
     !(a1 === a2 && a2 === a3) || (a1 === a3)
-
+   */
   def apply[A](implicit n: CNumeric[A]): CNumeric[A] = n
 
   def apply[A](mask: BigInt, minimum: A, maximum: A)(n: A => BigInt, app: BigInt => A): CNumeric[A] =
@@ -71,6 +71,12 @@ object CNumeric {
       def max     = maximum
     }
 
+  def inRange[A: CNumeric](u: BigInt): Boolean = {
+    val C = CNumeric[A]
+    C.num(C.min) <= u && u <= C.num(C.max)
+  }
+
+  def safe[A: CNumeric](u: BigInt): Option[A] = Try(CNumeric[A].lift(u)).toOption
 }
 
 trait CNumericSyntax {

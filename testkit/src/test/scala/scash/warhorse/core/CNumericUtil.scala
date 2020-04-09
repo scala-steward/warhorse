@@ -4,7 +4,7 @@ import scash.warhorse.core.typeclass.CNumeric
 import scodec.Codec
 import scodec.bits.ByteVector
 import zio.test.Assertion.Render.param
-import zio.test.Assertion.{ equalTo, isNone, isTrue }
+import zio.test.Assertion.{ equalTo, isFalse, isNone, isTrue }
 import zio.test.{ assert, Assertion }
 
 import scala.util.Try
@@ -13,10 +13,13 @@ object CNumericUtil {
   def equalTo_[A: CNumeric](expected: A): Assertion[A] =
     Assertion.assertion("equalTo")(param(expected))(_ === expected)
 
-  def inRange[A: CNumeric](u: BigInt): Boolean = {
-    val C = CNumeric[A]
-    C.num(C.min) <= u && u <= C.num(C.max)
-  }
+  def inRange[A: CNumeric](u: BigInt): Boolean = CNumeric.inRange[A](u)
+
+  def safe[A: CNumeric](u: BigInt) =
+    CNumeric.safe[A](u) match {
+      case Some(a) => assert(CNumeric[A].num(a))(equalTo_(u))
+      case None    => assert(inRange[A](u))(isFalse)
+    }
 
   def shiftL[A: CNumeric](u: A, i: Int) = {
     val Cnum     = CNumeric[A]
