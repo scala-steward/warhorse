@@ -4,6 +4,15 @@ import zio.test.Gen
 
 trait NumGen {
 
+  /** Creates a generator that generates positive int numbers */
+  def posInt = Gen.int(0, Int.MaxValue)
+
+  /** Creates a generator that generates positive int numbers without zero */
+  def posIntNoZero = Gen.int(1, Int.MaxValue)
+
+  /** Creates a generator that generates negative int numbers */
+  def negInt = Gen.int(0, Int.MaxValue)
+
   /** Creates a generator that generates positive long numbers */
   def posLong = Gen.long(0, Long.MaxValue)
 

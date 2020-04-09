@@ -23,6 +23,6 @@ object Int64 {
   /** Generates a random Int64 */
   implicit val int64LCodec: Codec[Int64] = int64L.xmap(apply(_), _.num)
 
-  implicit val uint64Numeric: CNumeric[Int64] =
+  implicit val int64Numeric: CNumeric[Int64] =
     CNumeric[Int64](0xFFFFFFFFFFFFFFFFL, min, max)(_.num, apply(_))
 }
