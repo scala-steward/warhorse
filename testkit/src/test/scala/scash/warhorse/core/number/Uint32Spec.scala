@@ -28,6 +28,9 @@ object Uint32Spec extends DefaultRunnableSpec {
     ),
     suite("Serde")(
       testM("symmetry")(check(gen.uint32)(symmetry)),
+      testM("symmetryHex")(check(gen.uint32)(symmetryHex)),
+      test("sym min")(symmetry(Uint32.min)),
+      test("sym max")(symmetry(Uint32.max)),
       test("0")(assert(ByteVector(0, 0, 0, 0).decode[Uint32])(equalTo_(Uint32.min))),
       test("1")(assert(ByteVector(1, 0, 0, 0).decode[Uint32])(equalTo_(Uint32.one))),
       test("16777216")(assert(ByteVector(0, 0, 0, 1).decode[Uint32])(equalTo_(Uint32(16777216)))),

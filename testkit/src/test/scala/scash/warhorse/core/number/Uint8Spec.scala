@@ -28,6 +28,9 @@ object Uint8Spec extends DefaultRunnableSpec {
     ),
     suite("Serde")(
       testM("symmetry")(check(gen.uint8)(symmetry)),
+      testM("symmetryHex")(check(gen.uint8)(symmetryHex)),
+      test("sym min")(symmetry(Uint8.min)),
+      test("sym max")(symmetry(Uint8.max)),
       test("0")(assert(ByteVector(0.toByte).decode[Uint8])(equalTo_(Uint8.min))),
       test("1")(assert(ByteVector(1.toByte).decode[Uint8])(equalTo_(Uint8.one))),
       test("0xFF")(assert(ByteVector(0xFF.toByte).decode[Uint8])(equalTo_(Uint8.max))),
