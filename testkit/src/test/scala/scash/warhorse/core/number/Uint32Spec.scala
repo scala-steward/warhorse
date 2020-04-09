@@ -16,7 +16,7 @@ object Uint32Spec extends DefaultRunnableSpec {
   val spec = suite("Uint32")(
     suite("CNumeric")(
       testM("shiftL")(check(gen.uint32, Gen.int(0, 32))(shiftL)),
-      testM("shiftR")(check(gen.uint32, Gen.int(0, 100))(shiftR(_, _, 64))),
+      testM("shiftR")(check(gen.uint32, Gen.int(0, 100))(shiftR)),
       testM("sum")(check(gen.uint32, gen.uint32)(sum)),
       testM("substract")(check(gen.uint32, gen.uint32)(substract)),
       testM("multiply")(check(gen.uint32, gen.uint32)(mult)),
@@ -28,6 +28,9 @@ object Uint32Spec extends DefaultRunnableSpec {
     ),
     suite("Serde")(
       testM("symmetry")(check(gen.uint32)(symmetry)),
+      testM("symmetryHex")(check(gen.uint32)(symmetryHex)),
+      test("sym min")(symmetry(Uint32.min)),
+      test("sym max")(symmetry(Uint32.max)),
       test("0")(assert(ByteVector(0, 0, 0, 0).decode[Uint32])(equalTo_(Uint32.min))),
       test("1")(assert(ByteVector(1, 0, 0, 0).decode[Uint32])(equalTo_(Uint32.one))),
       test("16777216")(assert(ByteVector(0, 0, 0, 1).decode[Uint32])(equalTo_(Uint32(16777216)))),

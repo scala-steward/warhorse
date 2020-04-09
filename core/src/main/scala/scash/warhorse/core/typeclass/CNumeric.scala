@@ -27,11 +27,7 @@ trait CNumeric[A] {
 
   def shiftL(a: A, a1: Int): A = lift((num(a) << a1) & andMask)
 
-  //this check is for weird behavior with the jvm and shift rights
-  //https://stackoverflow.com/questions/47519140/bitwise-shift-right-with-long-not-equaling-zero/47519728#47519728
-  def shiftR(a: A, a1: Int): A =
-    if (a1.toLong > 63) lift(0)
-    else lift(num(a) >> a1)
+  def shiftR(a: A, a1: Int): A = lift(num(a) >> a1)
 }
 
 object CNumeric {
