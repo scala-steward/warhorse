@@ -314,8 +314,8 @@ workflows:
           filters:
             <<: *filter_tags
       - coverage:
-          - requires:
-            - test_213_jdk8_jvm
+          requires:
+            - lint
           filters:
             <<: *filter_tags
       # - test_212_jdk11_jvm:
