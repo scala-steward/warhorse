@@ -26,7 +26,7 @@ inThisBuild(
 
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")
-
+addCommandAlias("coverageGen", "coverage testkit/test core/coverageReport core/coverageAggregate core/coveralls")
 lazy val warhorse =
   (project in file("."))
     .settings(
