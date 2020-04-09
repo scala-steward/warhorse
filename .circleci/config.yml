@@ -137,6 +137,17 @@ test: &test
         command: ./sbt ++${SCALA_VERSION}! test
     - <<: *save_cache
 
+coverage: &coverage
+  steps:
+    - checkout
+    - <<: *load_cache
+    - <<: *install_jdk
+    - <<: *sudo_sbt
+    - run:
+        name: Generate coverage report
+        command: ./sbt ++${SCALA_VERSION}! coverage testkit/test core/coverageReport core/coverageAggregate core/coveralls
+    - <<: *save_cache
+
 # release: &release
 #   steps:
 #       - checkout
@@ -231,6 +242,13 @@ jobs:
       - <<: *scala_213
       - <<: *jdk_8
 
+  coverage:
+    <<: *coverage
+    <<: *machine_ubuntu
+    environment:
+      - <<: *scala_212
+      - <<: *jdk_8
+
   # test_dotty_jdk8_jvm:
   #   <<: *test
   #   <<: *machine_ubuntu
@@ -291,6 +309,11 @@ workflows:
           filters:
             <<: *filter_tags
       - test_213_jdk8_jvm:
+          requires:
+            - lint
+          filters:
+            <<: *filter_tags
+      - coverage:
           requires:
             - lint
           filters:
