@@ -145,7 +145,7 @@ coverage: &coverage
     - <<: *sudo_sbt
     - run:
         name: Generate coverage report
-        command: ./sbt ++${SCALA_VERSION}! coverageGen
+        command: ./sbt ++${SCALA_VERSION}! coverage testkit/test core/coverageReport core/coverageAggregate core/coveralls
     - <<: *save_cache
 
 # release: &release
