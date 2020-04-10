@@ -2,7 +2,7 @@ import sbt._
 
 object Deps {
   object V {
-    val scodecv     = "1.11.6"
+    val scodecv     = "1.11.7"
     val scodecbitsv = "1.1.14"
     val zioV        = "1.0.0-RC18-2"
   }
