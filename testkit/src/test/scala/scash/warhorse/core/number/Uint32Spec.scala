@@ -23,6 +23,7 @@ object Uint32Spec extends DefaultRunnableSpec {
       testM("bitwiseInclusive |")(check(gen.uint32, gen.uint32)(bitwiseInclusive)),
       testM("bitwiseExclusive ^")(check(gen.uint32, gen.uint32)(bitwiseExclusive)),
       testM("bitwiseAnd &")(check(gen.uint32, gen.uint32)(bitwiseAnd)),
+      testM("test safe")(check(gen.positiveBigInts)(safe[Uint32](i => Uint32.safe(i.toLong)))),
       test("out of bounds")(outofBounds[Uint32]),
       test("test bounds")(testBounds[Uint32](BigInt(0), BigInt(4294967295L)))
     ),

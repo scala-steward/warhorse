@@ -21,6 +21,7 @@ object Int64Spec extends DefaultRunnableSpec {
       testM("bitwiseInclusive |")(check(gen.int64, gen.int64)(bitwiseInclusive)),
       testM("bitwiseExclusive ^")(check(gen.int64, gen.int64)(bitwiseExclusive)),
       testM("bitwiseAnd &")(check(gen.int64, gen.int64)(bitwiseAnd)),
+      testM("test safe")(check(gen.bigInts)(safe[Int64](Int64.safe))),
       test("out of bounds")(outofBounds[Int64]),
       test("test bounds")(testBounds[Int64](BigInt(-9223372036854775808L), BigInt(9223372036854775807L)))
     ),
