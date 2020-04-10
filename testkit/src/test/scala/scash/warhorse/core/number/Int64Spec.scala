@@ -41,7 +41,7 @@ object Int64Spec extends DefaultRunnableSpec {
         assert((ByteVector.fill(4)(0xFF) ++ ByteVector.low(4)).decode[Int64])(equalTo_(Int64(4294967295L)))
       ),
       test("0xFF == Int8.max")(assert((0xFF.toByte +: ByteVector.low(7)).decode[Int64])(equalTo_(Int64(255)))),
-      //test("max to hex")(assert(Int64.max.hex)(equalTo())),
+      test("max to hex")(assert(Int64.max.hex)(equalTo("ffffffffffffff7f"))),
       test("min to hex")(assert(Int64.min.hex)(equalTo("0000000000000080"))),
       test("0xffffffffffffff7f == Int64.max")(
         assert((ByteVector.fill(7)(0xFF) :+ 0x7F.toByte).decode[Int64])(equalTo_(Int64.max))
