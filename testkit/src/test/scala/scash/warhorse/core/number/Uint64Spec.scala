@@ -22,6 +22,7 @@ object Uint64Spec extends DefaultRunnableSpec {
       testM("bitwiseInclusive |")(check(gen.uint64, gen.uint64)(bitwiseInclusive)),
       testM("bitwiseExclusive ^")(check(gen.uint64, gen.uint64)(bitwiseExclusive)),
       testM("bitwiseAnd &")(check(gen.uint64, gen.uint64)(bitwiseAnd)),
+      testM("test safe")(check(gen.positiveBigInts)(safe[Uint64](Uint64.safe))),
       test("out of bounds")(outofBounds[Uint64]),
       test("test bounds")(testBounds[Uint64](BigInt(0), BigInt("18446744073709551615")))
     ),

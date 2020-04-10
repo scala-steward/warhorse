@@ -23,6 +23,7 @@ object Uint8Spec extends DefaultRunnableSpec {
       testM("bitwiseInclusive |")(check(gen.uint8, gen.uint8)(bitwiseInclusive)),
       testM("bitwiseExclusive ^")(check(gen.uint8, gen.uint8)(bitwiseExclusive)),
       testM("bitwiseAnd &")(check(gen.uint8, gen.uint8)(bitwiseAnd)),
+      testM("test safe")(check(gen.positiveBigInts)(safe[Uint8](i => Uint8.safe(i.toInt)))),
       test("out of bounds")(outofBounds[Uint8]),
       test("test bounds")(testBounds[Uint8](BigInt(0), BigInt(0xFF)))
     ),

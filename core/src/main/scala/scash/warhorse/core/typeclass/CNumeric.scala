@@ -81,7 +81,7 @@ object CNumeric {
 
 trait CNumericSyntax {
   implicit class CNumericSyntaxOps[A: CNumeric](a: A) {
-    def +[A1: CNumeric](num: A1): A         = CNumeric[A].sum[A1](a, num)
+    def +[A1: CNumeric](num: A1): A         = CNumeric[A].sum(a, num)
     def -[A1: CNumeric](num: A1): A         = CNumeric[A].sub(a, num)
     def *[A1: CNumeric](num: A1): A         = CNumeric[A].mul(a, num)
     def >[A1: CNumeric](num: A1): Boolean   = CNumeric[A].gt(a, num)

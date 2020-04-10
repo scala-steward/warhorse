@@ -13,7 +13,7 @@ object Int64 {
 
   def apply(n: BigInt): Int64 = new Int64(verify(n)(min, max).toLong)
 
-  def safe(bigInt: Long): Option[Int64] = Try(apply(bigInt)).toOption
+  def safe(bigInt: BigInt): Option[Int64] = Try(apply(bigInt)).toOption
 
   val min  = new Int64(-9223372036854775808L)
   val zero = new Int64(0)

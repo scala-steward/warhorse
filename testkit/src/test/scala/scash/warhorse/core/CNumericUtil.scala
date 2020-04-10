@@ -15,8 +15,8 @@ object CNumericUtil {
 
   def inRange[A: CNumeric](u: BigInt): Boolean = CNumeric.inRange[A](u)
 
-  def safe[A: CNumeric](u: BigInt) =
-    CNumeric.safe[A](u) match {
+  def safe[A: CNumeric](f: BigInt => Option[A])(u: BigInt) =
+    f(u) match {
       case Some(a) => assert(CNumeric[A].num(a))(equalTo_(u))
       case None    => assert(inRange[A](u))(isFalse)
     }

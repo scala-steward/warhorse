@@ -5,14 +5,6 @@ import scash.warhorse.core.typeclass.CNumeric
 import scala.math.BigInt
 
 package object number {
-  def pow2(exponent: Int): BigInt = {
-    if (exponent < 64)
-      new IllegalArgumentException(
-        "We cannot have anything larger than 2^64 - 1 in a long, you tried to do 2^" + exponent
-      )
-    BigInt(1) << exponent
-  }
-
   def uLongtoBigInt(uLong: Long): BigInt =
     (BigInt(uLong >>> 1) << 1) + (uLong & 1)
 

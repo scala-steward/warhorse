@@ -21,7 +21,7 @@ object Int32Spec extends DefaultRunnableSpec {
       testM("bitwiseInclusive |")(check(gen.int32, gen.int32)(bitwiseInclusive)),
       testM("bitwiseExclusive ^")(check(gen.int32, gen.int32)(bitwiseExclusive)),
       testM("bitwiseAnd &")(check(gen.int32, gen.int32)(bitwiseAnd)),
-      testM("test safe")(check(gen.bigInts)(safe[Int32])),
+      testM("test safe")(check(gen.bigInts)(safe[Int32](Int32.safe))),
       test("out of bounds")(outofBounds[Int32]),
       test("test bounds")(testBounds[Int32](BigInt(-2147483648), BigInt(2147483647)))
     ),
