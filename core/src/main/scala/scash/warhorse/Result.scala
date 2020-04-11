@@ -28,7 +28,7 @@ sealed trait Result[+A] extends Product with Serializable {
   def flatMap[B](f: A => Result[B]): Result[B]
 
   /** Converts an `Result[Result[X]]` in to an `Result[X]`. */
-  def flatten[B](implicit ev: A <:< Result[B]): Result[B]
+  //def flatten[B](implicit ev: A <:< Result[B]): Result[B]
 
   /** Transforms this attempt to a value of type `B` using the supplied functions. */
   def fold[B](ifFailure: Err => B, ifSuccessful: A => B): B
@@ -118,10 +118,10 @@ object Result {
 
   /** Successful attempt. */
   final case class Successful[A](value: A) extends Result[A] {
-    def map[B](f: A => B): Result[B]                                       = Successful(f(value))
-    def mapErr(f: Err => Err): Result[A]                                   = this
-    def flatMap[B](f: A => Result[B]): Result[B]                           = f(value)
-    def flatten[B](implicit ev: A <:< Result[B]): Result[B]                = value
+    def map[B](f: A => B): Result[B]             = Successful(f(value))
+    def mapErr(f: Err => Err): Result[A]         = this
+    def flatMap[B](f: A => Result[B]): Result[B] = f(value)
+    //def flatten[B](implicit ev: A <:< Result[B]): Result[B]                = value
     def fold[B](ifFailure: Err => B, ifSuccessful: A => B): B              = ifSuccessful(value)
     def getOrElse[B >: A](default: => B): B                                = value
     def orElse[B >: A](fallback: => Result[B])                             = this
@@ -136,10 +136,10 @@ object Result {
 
   /** Failed attempt. */
   final case class Failure(cause: Err) extends Result[Nothing] {
-    def map[B](f: Nothing => B): Result[B]                          = this
-    def mapErr(f: Err => Err): Result[Nothing]                      = Failure(f(cause))
-    def flatMap[B](f: Nothing => Result[B]): Result[B]              = this
-    def flatten[B](implicit ev: Nothing <:< Result[B]): Result[B]   = this
+    def map[B](f: Nothing => B): Result[B]             = this
+    def mapErr(f: Err => Err): Result[Nothing]         = Failure(f(cause))
+    def flatMap[B](f: Nothing => Result[B]): Result[B] = this
+    //def flatten[B](implicit ev: Nothing <:< Result[B]): Result[B]   = this
     def fold[B](ifFailure: Err => B, ifSuccessful: Nothing => B): B = ifFailure(cause)
     def getOrElse[B >: Nothing](default: => B): B                   = default
     def orElse[B >: Nothing](fallback: => Result[B])                = fallback
