@@ -2,7 +2,6 @@ package scash.warhorse
 
 import scodec.Attempt
 
-import scala.Predef.<:<
 import scala.util.Try
 import scala.util.control.NonFatal
 
