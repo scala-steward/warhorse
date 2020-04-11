@@ -49,8 +49,8 @@ object Int64Spec extends DefaultRunnableSpec {
       test("0x0000000000000080 == Int64.min")(
         assert((ByteVector.low(7) :+ 0x80.toByte).decode[Int64])(success(Int64.min))
       ),
-      test("too large bytevector 0")(assert(ByteVector.low(9).decodeExactly[Int64])(failure)),
-      test("too large bytevector 1")(assert(ByteVector.high(9).decodeExactly[Int64])(failure))
+      test("too large bytevector 0")(assert(ByteVector.low(9).decodeExact[Int64])(failure)),
+      test("too large bytevector 1")(assert(ByteVector.high(9).decodeExact[Int64])(failure))
     )
   )
 }

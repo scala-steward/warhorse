@@ -1,3 +1,5 @@
 package scash.warhorse
 
-package object gen extends NumGen with IntGen with UintGen
+import scash.warhorse.gen.crypto.{ IntGen, UintGen }
+
+package object gen extends NumGen with IntGen with UintGen with ByteVectorGen

@@ -8,13 +8,7 @@ import scodec.bits.{ BitVector, ByteVector }
 trait Serde[A] {
   def codec: Codec[A]
 
-  def xmap[B](fa: A => B, fb: B => A): Serde[B] =
-    Serde(
-      Codec[B](
-        (b: B) => codec.encode(fb(b)),
-        (bits: BitVector) => codec.decode(bits).map(_.map(fa))
-      )
-    )
+  def xmap[B](fa: A => B, fb: B => A): Serde[B] = Serde(codec.xmap(fa, fb))
 
   def decodeValue(byteVector: ByteVector): Result[A] =
     Result.fromAttempt(codec.decodeValue(byteVector.bits))
@@ -54,14 +48,20 @@ trait SerdeSyntax {
   }
 
   implicit class ByteVectorOps(byteVector: ByteVector) {
-    def validDecode[A: Serde]: A    = decode.require
+
+    /** Returns the successful value if present; otherwise throws an `IllegalArgumentException`. */
+    def decode_[A: Serde]: A = decode.require
+
+    /** Returns the Successful[A] if decoding was successful. otherwise `Failure(cause)` */
     def decode[A: Serde]: Result[A] = Serde[A].decodeValue(byteVector)
 
-    def decodeExactly[A: Serde]: Result[A] = Serde[A].decode(byteVector).flatMap { a =>
+    /** Decode Bytevector into type `Result[A]`. if there are remainder bytes it will return Failure */
+    def decodeExact[A: Serde]: Result[A] = Serde[A].decode(byteVector).flatMap { a =>
       if (a.remainder.isEmpty) Successful(a.value)
       else Failure(Err(s"Decoding left remainder bits: ${a.remainder.toByteVector.size}"))
     }
 
-    def validDecodeExactly[A: Serde]: A = decodeExactly.require
+    /** Returns the successful value if present; otherwise throws an `IllegalArgumentException` if decodeExact fails. */
+    def decodeExact_[A: Serde]: A = decodeExact.require
   }
 }
