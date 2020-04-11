@@ -2,11 +2,10 @@ package scash.warhorse.core.number
 
 import scash.warhorse.core._
 import scash.warhorse.core.CNumericUtil._
+import scash.warhorse.core.SerdeUtil._
 import scash.warhorse.gen
 
 import scodec.bits.ByteVector
-
-import scala.util.Try
 
 import zio.test.DefaultRunnableSpec
 import zio.test.Assertion._
@@ -32,14 +31,14 @@ object Uint8Spec extends DefaultRunnableSpec {
       testM("symmetryHex")(check(gen.uint8)(symmetryHex)),
       test("sym min")(symmetry(Uint8.min)),
       test("sym max")(symmetry(Uint8.max)),
-      test("0")(assert(ByteVector(0.toByte).decode[Uint8])(equalTo_(Uint8.min))),
-      test("1")(assert(ByteVector(1.toByte).decode[Uint8])(equalTo_(Uint8.one))),
-      test("0xFF")(assert(ByteVector(0xFF.toByte).decode[Uint8])(equalTo_(Uint8.max))),
-      test("255")(assert(ByteVector(255.toByte).decode[Uint8])(equalTo_(Uint8.max))),
+      test("0")(assert(ByteVector(0.toByte).decode[Uint8])(success(Uint8.min))),
+      test("1")(assert(ByteVector(1.toByte).decode[Uint8])(success(Uint8.one))),
+      test("0xFF")(assert(ByteVector(0xFF.toByte).decode[Uint8])(success(Uint8.max))),
+      test("255")(assert(ByteVector(255.toByte).decode[Uint8])(success(Uint8.max))),
       test("max to hex")(assert(Uint8.max.hex)(equalTo("ff"))),
       test("min to hex")(assert(Uint8.min.hex)(equalTo("00"))),
-      test("too large bytevector 0")(assert(Try(ByteVector(0, 0).decodeExactly[Uint8]).toOption)(isNone)),
-      test("too large bytevector 1")(assert(Try(ByteVector(1, 1).decodeExactly[Uint8]).toOption)(isNone))
+      test("too large bytevector 0")(assert(ByteVector(0, 0).decodeExactly[Uint8])(failure)),
+      test("too large bytevector 1")(assert(ByteVector(1, 1).decodeExactly[Uint8])(failure))
     )
   )
 }

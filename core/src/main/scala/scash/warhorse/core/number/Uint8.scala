@@ -1,8 +1,7 @@
 package scash.warhorse.core.number
 
-import scash.warhorse.core.typeclass.CNumeric
+import scash.warhorse.core.typeclass.{ CNumeric, Serde }
 import scash.warhorse.core._
-import scodec.Codec
 import scodec.codecs.uint8L
 
 import scala.util.Try
@@ -21,7 +20,8 @@ object Uint8 {
   val one = new Uint8(1)
   val max = new Uint8(255)
 
-  implicit val uint8Codec: Codec[Uint8] = uint8L.xmap(apply(_), _.num)
+  implicit val uint8Serde: Serde[Uint8] =
+    Serde[Uint8](uint8L.xmap[Uint8](apply(_), _.num))
 
   implicit val uint8Numeric: CNumeric[Uint8] =
     CNumeric[Uint8](0xFF, min, max)(_.num, apply(_))

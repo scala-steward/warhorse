@@ -1,7 +1,6 @@
 package scash.warhorse.core.number
 
-import scash.warhorse.core.typeclass.CNumeric
-import scodec.Codec
+import scash.warhorse.core.typeclass.{ CNumeric, Serde }
 import scodec.codecs.int32L
 
 protected case class Int32(num: Int) extends AnyVal
@@ -18,8 +17,8 @@ object Int32 {
   val one  = new Int32(1)
   val max  = new Int32(2147483647)
 
-  /** Generates a random Int32 */
-  implicit val int32LCodec: Codec[Int32] = int32L.xmap(apply(_), _.num)
+  implicit val int32Serde: Serde[Int32] =
+    Serde[Int32](int32L.xmap[Int32](apply(_), _.num))
 
   implicit val int32Numeric: CNumeric[Int32] =
     CNumeric[Int32](0xffffffff, min, max)(_.num, apply(_))

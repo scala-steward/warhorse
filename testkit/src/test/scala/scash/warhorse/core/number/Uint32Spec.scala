@@ -2,15 +2,12 @@ package scash.warhorse.core.number
 
 import scash.warhorse.gen
 import scash.warhorse.core.CNumericUtil._
+import scash.warhorse.core.SerdeUtil._
 import scash.warhorse.core._
-
 import scodec.bits.ByteVector
-
-import scala.util.Try
 
 import zio.test.Assertion._
 import zio.test._
-import zio.test.Assertion.equalTo
 
 object Uint32Spec extends DefaultRunnableSpec {
   val spec = suite("Uint32")(
@@ -32,16 +29,20 @@ object Uint32Spec extends DefaultRunnableSpec {
       testM("symmetryHex")(check(gen.uint32)(symmetryHex)),
       test("sym min")(symmetry(Uint32.min)),
       test("sym max")(symmetry(Uint32.max)),
-      test("0")(assert(ByteVector(0, 0, 0, 0).decode[Uint32])(equalTo_(Uint32.min))),
-      test("1")(assert(ByteVector(1, 0, 0, 0).decode[Uint32])(equalTo_(Uint32.one))),
-      test("16777216")(assert(ByteVector(0, 0, 0, 1).decode[Uint32])(equalTo_(Uint32(16777216)))),
-      test("65536")(assert(ByteVector(0, 0, 1, 0).decode[Uint32])(equalTo_(Uint32(65536)))),
-      test("0xFF")(assert(ByteVector(0xFF, 0, 0, 0).decode[Uint32])(equalTo_(Uint32(255)))),
+      test("0")(assert(ByteVector(0, 0, 0, 0).decode[Uint32])(success(Uint32.min))),
+      test("1")(assert(ByteVector(1, 0, 0, 0).decode[Uint32])(success(Uint32.one))),
+      test("16777216")(assert(ByteVector(0, 0, 0, 1).decode[Uint32])(success(Uint32(16777216)))),
+      test("65536")(assert(ByteVector(0, 0, 1, 0).decode[Uint32])(success(Uint32(65536)))),
+      test("0xFF")(assert(ByteVector(0xFF, 0, 0, 0).decode[Uint32])(success(Uint32(255)))),
       test("max to hex")(assert(Uint32.max.hex)(equalTo("ffffffff"))),
       test("min to hex")(assert(Uint32.min.hex)(equalTo("00000000"))),
-      test("0xffffffff == Uint32.max")(assert(ByteVector(0xff, 0xff, 0xff, 0xff).decode[Uint32])(equalTo_(Uint32.max))),
-      test("too large bytevector 0")(assert(Try(ByteVector(0, 0, 0, 0, 0).decodeExactly[Uint32]).toOption)(isNone)),
-      test("too large bytevector 1")(assert(Try(ByteVector(1, 1, 1, 1, 1).decodeExactly[Uint32]).toOption)(isNone))
+      test("0xffffffff == Uint32.max")(
+        assert(ByteVector(0xff, 0xff, 0xff, 0xff).decode[Uint32])(success(Uint32.max))
+      ),
+      test("too large bytevector 0")(
+        assert(ByteVector(0, 0, 0, 0, 0).decodeExactly[Uint32])(failure)
+      ),
+      test("too large bytevector 1")(assert(ByteVector(1, 1, 1, 1, 1).decodeExactly[Uint32])(failure))
     )
   )
 }
