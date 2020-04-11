@@ -37,8 +37,8 @@ object Uint8Spec extends DefaultRunnableSpec {
       test("255")(assert(ByteVector(255.toByte).decode[Uint8])(success(Uint8.max))),
       test("max to hex")(assert(Uint8.max.hex)(equalTo("ff"))),
       test("min to hex")(assert(Uint8.min.hex)(equalTo("00"))),
-      test("too large bytevector 0")(assert(ByteVector(0, 0).decodeExactly[Uint8])(failure)),
-      test("too large bytevector 1")(assert(ByteVector(1, 1).decodeExactly[Uint8])(failure))
+      test("too large bytevector 0")(assert(ByteVector(0, 0).decodeExact[Uint8])(failure)),
+      test("too large bytevector 1")(assert(ByteVector(1, 1).decodeExact[Uint8])(failure))
     )
   )
 }

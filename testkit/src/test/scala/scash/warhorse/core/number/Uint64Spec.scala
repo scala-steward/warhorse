@@ -47,8 +47,8 @@ object Uint64Spec extends DefaultRunnableSpec {
       test("0xffffffffffffffff == Uint64.max")(
         assert(ByteVector.fill(8)(0xFF).decode[Uint64])(success(Uint64.max))
       ),
-      test("too large bytevector 0")(assert(ByteVector.fill(9)(0).decodeExactly[Uint64])(failure)),
-      test("too large bytevector 1")(assert(ByteVector.fill(9)(1).decodeExactly[Uint64])(failure))
+      test("too large bytevector 0")(assert(ByteVector.fill(9)(0).decodeExact[Uint64])(failure)),
+      test("too large bytevector 1")(assert(ByteVector.fill(9)(1).decodeExact[Uint64])(failure))
     )
   )
 }

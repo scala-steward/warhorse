@@ -40,9 +40,9 @@ object Uint32Spec extends DefaultRunnableSpec {
         assert(ByteVector(0xff, 0xff, 0xff, 0xff).decode[Uint32])(success(Uint32.max))
       ),
       test("too large bytevector 0")(
-        assert(ByteVector(0, 0, 0, 0, 0).decodeExactly[Uint32])(failure)
+        assert(ByteVector(0, 0, 0, 0, 0).decodeExact[Uint32])(failure)
       ),
-      test("too large bytevector 1")(assert(ByteVector(1, 1, 1, 1, 1).decodeExactly[Uint32])(failure))
+      test("too large bytevector 1")(assert(ByteVector(1, 1, 1, 1, 1).decodeExact[Uint32])(failure))
     )
   )
 }

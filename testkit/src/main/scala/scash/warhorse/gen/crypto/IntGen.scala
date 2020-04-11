@@ -1,6 +1,7 @@
-package scash.warhorse.gen
+package scash.warhorse.gen.crypto
 
 import scash.warhorse.core.number.{ Int32, Int64 }
+import scash.warhorse.gen.{ negInt, negLong, posInt, posLong }
 import zio.test.Gen
 
 trait IntGen {

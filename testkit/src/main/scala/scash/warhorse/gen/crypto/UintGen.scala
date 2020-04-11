@@ -1,6 +1,7 @@
-package scash.warhorse.gen
+package scash.warhorse.gen.crypto
 
 import scash.warhorse.core.number.{ Uint32, Uint64, Uint8 }
+import scash.warhorse.gen.positiveBigInts
 import zio.test.Gen
 
 trait UintGen {
