@@ -2,17 +2,24 @@ import sbt._
 
 object Deps {
   object V {
-    val scodecv     = "1.11.7"
-    val scodecbitsv = "1.1.14"
-    val zioV        = "1.0.0-RC18-2"
+    val circe      = "0.12.3"
+    val scodec     = "1.11.7"
+    val scodecbits = "1.1.14"
+    val sttp       = "2.0.7"
+    val zio        = "1.0.0-RC18-2"
   }
 
   object Libs {
-    val scodecbits = "org.scodec" %% "scodec-bits"  % V.scodecbitsv
-    val scodec     = "org.scodec" %% "scodec-core"  % V.scodecv
-    val zio        = "dev.zio"    %% "zio"          % V.zioV withSources () withJavadoc ()
-    val zioTest    = "dev.zio"    %% "zio-test"     % V.zioV
-    val zioTestsbt = "dev.zio"    %% "zio-test-sbt" % V.zioV % "test"
+    val circeCore  = "io.circe"                     %% "circe-core"                    % V.circe
+    val circeGen   = "io.circe"                     %% "circe-generic"                 % V.circe
+    val scodecbits = "org.scodec"                   %% "scodec-bits"                   % V.scodecbits withSources () withJavadoc ()
+    val scodec     = "org.scodec"                   %% "scodec-core"                   % V.scodec withSources () withJavadoc ()
+    val sttp       = "com.softwaremill.sttp.client" %% "core"                          % V.sttp
+    val sttpCirce  = "com.softwaremill.sttp.client" %% "circe"                         % V.sttp
+    val sttpZio    = "com.softwaremill.sttp.client" %% "async-http-client-backend-zio" % V.sttp
+    val zio        = "dev.zio"                      %% "zio"                           % V.zio withSources () withJavadoc ()
+    val zioTest    = "dev.zio"                      %% "zio-test"                      % V.zio withSources () withJavadoc ()
+    val zioTestsbt = "dev.zio"                      %% "zio-test-sbt"                  % V.zio % Test
   }
 
   val core = List(
@@ -26,5 +33,14 @@ object Deps {
     Libs.scodecbits,
     Libs.zioTest,
     Libs.zioTestsbt
+  )
+
+  val rpc = List(
+    Libs.zio,
+    Libs.circeCore,
+    Libs.circeGen,
+    Libs.sttp,
+    Libs.sttpCirce,
+    Libs.sttpZio
   )
 }

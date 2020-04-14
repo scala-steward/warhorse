@@ -27,6 +27,7 @@ inThisBuild(
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck")
 addCommandAlias("coverageGen", "coverage testkit/test core/coverageReport core/coverageAggregate core/coveralls")
+
 lazy val warhorse =
   (project in file("."))
     .settings(
@@ -50,6 +51,16 @@ lazy val testkit = project
     buildInfoSettings("testkit"),
     libraryDependencies ++= Deps.testkit,
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
+  )
+  .dependsOn(core)
+  .enablePlugins(BuildInfoPlugin)
+
+lazy val rpc = project
+  .in(file("rpc"))
+  .settings(
+    stdSettings("rpc"),
+    buildInfoSettings("rpc"),
+    libraryDependencies ++= Deps.rpc
   )
   .dependsOn(core)
   .enablePlugins(BuildInfoPlugin)
