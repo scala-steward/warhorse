@@ -5,7 +5,7 @@ import scodec.codecs.int64L
 
 import scala.util.Try
 
-protected case class Uint64(num: BigInt) extends AnyVal
+protected[warhorse] case class Uint64(num: BigInt) extends AnyVal
 
 object Uint64 {
   def apply(bigInt: BigInt): Uint64 = new Uint64(verify(bigInt)(min, max))
