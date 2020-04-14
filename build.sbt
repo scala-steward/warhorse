@@ -52,7 +52,7 @@ lazy val testkit = project
     libraryDependencies ++= Deps.testkit,
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
   )
-  .dependsOn(core)
+  .dependsOn(core, rpc)
   .enablePlugins(BuildInfoPlugin)
 
 lazy val rpc = project

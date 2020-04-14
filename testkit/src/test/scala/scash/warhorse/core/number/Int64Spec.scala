@@ -2,6 +2,7 @@ package scash.warhorse.core.number
 
 import scash.warhorse.core.CNumericUtil._
 import scash.warhorse.core.SerdeUtil._
+import scash.warhorse.TestUtil._
 import scash.warhorse.core._
 import scash.warhorse.gen
 import scodec.bits.ByteVector

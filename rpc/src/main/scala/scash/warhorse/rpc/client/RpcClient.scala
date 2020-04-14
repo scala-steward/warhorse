@@ -41,17 +41,17 @@ object RpcClient {
       }
       .toLayer
 
-  private def response[A: Decoder] = asJson[RpcResponse[A]].map {
+  private def response[A: Decoder] = asJson[RpcResponse[A]].map(
     _ match {
-      case Left(e) => Failure(Err(e.body))
+      case Left(e) => Failure(Err(s"Json Parsing error. body: ${e.body}"))
       case Right(a) =>
         a match {
-          case RpcResponse(_, Some(e))    => Failure(Err.EffectError(RpcResponseError.error(e.code), e.message))
-          case RpcResponse(Some(a), None) => Successful(a)
-          case _                          => Failure(Err("The Response is not properly constructed"))
+          case RpcResponse(_, Some(e), _)    => Failure(Err.EffectError(RpcResponseError.error(e.code), e.message))
+          case RpcResponse(Some(a), None, _) => Successful(a)
+          case _                             => Failure(Err(s"The Response is not properly constructed: $a"))
         }
     }
-  }
+  )
 
   private case class RpcRequest(
     method: String,
@@ -61,7 +61,8 @@ object RpcClient {
 
   private case class RpcResponse[A](
     result: Option[A],
-    error: Option[RpcResponseError]
+    error: Option[RpcResponseError],
+    id: String
   )
 
   private implicit def rpcResponseDecoder[A: Decoder]: Decoder[RpcResponse[A]] = deriveDecoder
