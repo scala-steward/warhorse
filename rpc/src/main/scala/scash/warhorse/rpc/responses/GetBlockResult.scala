@@ -2,9 +2,9 @@ package scash.warhorse.rpc.responses
 
 import scash.warhorse.core.crypto.DoubleSha256B
 import scash.warhorse.core.number._
-
 import io.circe.Decoder
 import io.circe.generic.semiauto._
+import scodec.bits.ByteVector
 
 case class GetBlockResult(
   hash: DoubleSha256B,
@@ -12,13 +12,13 @@ case class GetBlockResult(
   size: Int,
   height: Int,
   version: Int,
-  versionHex: Int32,
+  versionHex: ByteVector,
   merkleroot: DoubleSha256B,
   tx: Vector[DoubleSha256B],
   time: Uint32,
   mediantime: Uint32,
   nonce: Uint32,
-  bits: Uint32,
+  bits: ByteVector,
   difficulty: BigDecimal,
   chainwork: String,
   nTx: Int,

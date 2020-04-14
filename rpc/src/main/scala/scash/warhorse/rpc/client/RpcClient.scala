@@ -16,7 +16,7 @@ import zio.{ Task, ZLayer }
 
 object RpcClient {
   trait Service {
-    def bitcoindCall[A: Decoder](cmd: String, parameters: List[String] = List.empty): Task[Result[A]]
+    def bitcoindCall[A: Decoder](cmd: String, parameters: List[Json] = List.empty): Task[Result[A]]
   }
 
   def make(
@@ -28,7 +28,8 @@ object RpcClient {
       .managed()
       .map { implicit sttp =>
         new RpcClient.Service {
-          def bitcoindCall[A: Decoder](cmd: String, parameters: List[String]): Task[Result[A]] =
+          def bitcoindCall[A: Decoder](cmd: String, parameters: List[Json]): Task[Result[A]] = {
+            Predef.println(rpcRequestEncoder(RpcRequest(cmd, parameters)))
             basicRequest
               .response(response[A])
               .post(uri)
@@ -37,6 +38,7 @@ object RpcClient {
               .basic(userName, password)
               .send()
               .map(_.body)
+          }
         }
       }
       .toLayer
@@ -55,7 +57,7 @@ object RpcClient {
 
   private case class RpcRequest(
     method: String,
-    params: List[String],
+    params: List[Json],
     id: String = UUID.randomUUID().toString
   )
 
