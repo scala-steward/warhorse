@@ -20,5 +20,9 @@ object Err {
     def message = s"$name must be $requirement, got: $is"
   }
 
+  final case class EffectError(name: String, cause: String) extends Err {
+    def message = s"$name failed because: $cause"
+  }
+
   def apply(message: String): Err = new General(message)
 }
