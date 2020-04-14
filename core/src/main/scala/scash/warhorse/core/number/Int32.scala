@@ -3,7 +3,7 @@ package scash.warhorse.core.number
 import scash.warhorse.core.typeclass.{ CNumeric, Serde }
 import scodec.codecs.int32L
 
-protected case class Int32(num: Int) extends AnyVal
+protected[warhorse] case class Int32(num: Int) extends AnyVal
 
 object Int32 {
   def apply(n: Int): Int32 = new Int32(n)

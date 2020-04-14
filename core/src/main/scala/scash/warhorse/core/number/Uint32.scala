@@ -5,7 +5,7 @@ import scodec.codecs.uint32L
 
 import scala.util.Try
 
-protected case class Uint32(num: Long) extends AnyVal
+protected[warhorse] case class Uint32(num: Long) extends AnyVal
 
 object Uint32 {
   def apply(n: Long): Uint32 = new Uint32(verify(n)(min, max))

@@ -5,7 +5,7 @@ import scodec.codecs.int64L
 
 import scala.util.Try
 
-protected case class Int64(num: Long) extends AnyVal
+protected[warhorse] case class Int64(num: Long) extends AnyVal
 
 object Int64 {
   def apply(n: Long): Int64 = new Int64(n)

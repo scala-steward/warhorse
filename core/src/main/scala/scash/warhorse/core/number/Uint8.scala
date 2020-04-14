@@ -6,7 +6,7 @@ import scodec.codecs.uint8L
 
 import scala.util.Try
 
-protected case class Uint8(num: Int) extends AnyVal
+protected[warhorse] case class Uint8(num: Int) extends AnyVal
 
 object Uint8 {
 
