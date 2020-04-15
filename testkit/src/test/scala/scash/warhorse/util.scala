@@ -5,7 +5,7 @@ import zio.test.Assertion
 import zio.test.Assertion.Render.param
 import zio.test.Assertion.isSubtype
 
-object TestUtil {
+object util {
   def success[A](expected: A): Assertion[Result[A]] =
     Assertion.assertion("success")(param(expected))(_ == Successful(expected))
 

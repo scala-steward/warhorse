@@ -1,6 +1,6 @@
 package scash.warhorse.core
 
-import scash.warhorse.TestUtil._
+import scash.warhorse.util._
 import scash.warhorse.core.typeclass.{ CNumeric, Serde }
 import scodec.bits.ByteVector
 

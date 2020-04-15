@@ -1,13 +1,10 @@
-package scash.warhorse.rpc
+package scash.warhorse.rpc.client
 
-import scash.warhorse.core.crypto._
-import scash.warhorse.rpc.client.RpcClient
-
+import scash.warhorse.core.crypto.DoubleSha256
 import zio.test.TestFailure
 import sttp.client._
 
-object RpcUtil {
-
+object util {
   val test1Hash = DoubleSha256.validBigEndianHex("000000000000000002010fbeac4ccbb5ad3abafe684228219134bb5354978644")
 
   val genesisBlockHashB =

@@ -2,7 +2,7 @@ package scash.warhorse.core.crypto
 
 import scash.warhorse.core._
 import scash.warhorse.core.crypto.RipeMd160._
-import scash.warhorse.TestUtil._
+import scash.warhorse.util._
 import scash.warhorse.gen
 
 import zio.test.DefaultRunnableSpec

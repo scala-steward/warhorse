@@ -1,6 +1,6 @@
 package scash.warhorse.core.crypto
 
-import scash.warhorse.TestUtil._
+import scash.warhorse.util._
 import scash.warhorse.core._
 import scash.warhorse.core.crypto.Sha256._
 import scash.warhorse.gen

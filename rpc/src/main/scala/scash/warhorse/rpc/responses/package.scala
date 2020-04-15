@@ -1,14 +1,12 @@
 package scash.warhorse.rpc
 
 import io.circe.Decoder
-
 import scash.warhorse.core.crypto.{ DoubleSha256, DoubleSha256B }
 import scash.warhorse.core.number.{ Int32, Uint32 }
 import scash.warhorse.core._
-
 import scodec.bits.ByteVector
 
-package object responses {
+package object responses extends GetBlockDecoders with RpcTransactionDecoders {
   implicit val byteVectorDecoder: Decoder[ByteVector] =
     Decoder.decodeString
       .emap(s => ByteVector.fromHex(s).toRight(s"Unable to parse byteVector: $s is not valid hex"))
