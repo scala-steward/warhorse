@@ -19,7 +19,7 @@ object Deps {
     val sttpZio    = "com.softwaremill.sttp.client" %% "async-http-client-backend-zio" % V.sttp
     val zio        = "dev.zio"                      %% "zio"                           % V.zio withSources () withJavadoc ()
     val zioTest    = "dev.zio"                      %% "zio-test"                      % V.zio withSources () withJavadoc ()
-    val zioTestsbt = "dev.zio"                      %% "zio-test-sbt"                  % V.zio % Test
+    val zioTestsbt = "dev.zio"                      %% "zio-test-sbt"                  % V.zio
   }
 
   val core = List(
@@ -31,8 +31,8 @@ object Deps {
   val testkit = List(
     Libs.scodec,
     Libs.scodecbits,
-    Libs.zioTest,
-    Libs.zioTestsbt
+    Libs.zioTest    % "compile,test,it",
+    Libs.zioTestsbt % "test,it"
   )
 
   val rpc = List(

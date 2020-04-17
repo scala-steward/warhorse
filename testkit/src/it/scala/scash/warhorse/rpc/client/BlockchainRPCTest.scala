@@ -16,14 +16,14 @@ object BlockchainRPCTest extends DefaultRunnableSpec {
     testM("getBlockRaw")(assertM(rpc.getBlockRaw(test2Hash.require))(successful[DoubleSha256B])),
     testM("getBlockWithTransactions")(
       assertM(rpc.getBlockWithTransactions(test2Hash.require))(successful[GetBlockWithTransactions])
-      ),
+    ),
     testM("getBlockchainInfo")(assertM(rpc.getBlockChainInfo)(successful[GetBlockChainInfo])),
     testM("getBlockCount")(assertM(rpc.getBlockCount)(successful[Int])),
     testM("getBlockHash")(assertM(rpc.getBlockHash(1))(successResult(genesisBlockHashB))),
     testM("getBlockHeader")(assertM(rpc.getBlockHeader(genesisBlockHashB.require))(successful[GetBlockHeader])),
     testM("getBlockHeaderRaw")(
       assertM(rpc.getBlockHeaderRaw(genesisBlockHashB.require))(successful[ByteVector])
-      ),
+    ),
     testM("getChainTips")(assertM(rpc.getChainTips)(successful[Vector[ChainTip]]))
-    ).provideCustomLayerShared(instance) @@ TestAspect.sequential
+  ).provideCustomLayerShared(instance) @@ TestAspect.sequential
 }
