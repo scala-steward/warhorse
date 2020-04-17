@@ -46,7 +46,9 @@ lazy val core = project
 
 lazy val testkit = project
   .in(file("testkit"))
+  .configs(IntegrationTest)
   .settings(
+    Defaults.itSettings,
     stdSettings("testkit"),
     buildInfoSettings("testkit"),
     libraryDependencies ++= Deps.testkit,

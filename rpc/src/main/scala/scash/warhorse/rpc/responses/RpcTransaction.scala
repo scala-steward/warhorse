@@ -14,7 +14,7 @@ case class RpcTransaction(
   version: Int,
   size: Int,
   locktime: Uint32,
-  vin: Vector[RpcTInput],
+  vin: Vector[RpcTransactionInput],
   vout: Vector[RpcTransactionOutput],
   hex: Option[String]
 )

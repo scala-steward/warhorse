@@ -1,14 +1,15 @@
 package scash.warhorse.rpc.client
 
 import java.util.UUID
-import io.circe._
-import io.circe.generic.semiauto._
 
 import scash.warhorse.{ Err, Result }
 import scash.warhorse.Result.{ Failure, Successful }
 
+import io.circe._
+import io.circe.generic.semiauto._
+
 import sttp.client.asynchttpclient.zio.AsyncHttpClientZioBackend
-import sttp.client.basicRequest
+import sttp.client.{ basicRequest, DeserializationError, HttpError }
 import sttp.client.circe._
 import sttp.model.Uri
 
@@ -45,12 +46,17 @@ object RpcClient {
 
   private def response[A: Decoder] = asJson[RpcResponse[A]].map(
     _ match {
-      case Left(e) => Failure(Err(s"Json Parsing error. body: ${e.body}"))
       case Right(a) =>
         a match {
           case RpcResponse(_, Some(e), _)    => Failure(Err.EffectError(RpcResponseError.error(e.code), e.message))
           case RpcResponse(Some(a), None, _) => Successful(a)
           case _                             => Failure(Err(s"The Response is not properly constructed: $a"))
+        }
+      case Left(e) =>
+        e match {
+          case DeserializationError(body, e) =>
+            Failure(Err.ParseError("Json", s"parsing $body \n failed at: ${e.getMessage()}"))
+          case HttpError(body) => Failure(Err.EffectError("Http", body))
         }
     }
   )

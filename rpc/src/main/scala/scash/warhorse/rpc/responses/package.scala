@@ -6,7 +6,7 @@ import scash.warhorse.core.number.{ Int32, Uint32 }
 import scash.warhorse.core._
 import scodec.bits.ByteVector
 
-package object responses extends GetBlockDecoders with RpcTransactionDecoders {
+package object responses extends Blockchain with RpcTransactionDecoders {
   implicit val byteVectorDecoder: Decoder[ByteVector] =
     Decoder.decodeString
       .emap(s => ByteVector.fromHex(s).toRight(s"Unable to parse byteVector: $s is not valid hex"))
