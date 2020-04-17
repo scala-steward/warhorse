@@ -24,5 +24,8 @@ object Err {
     def message = s"$name failed because: $cause"
   }
 
+  final case class ParseError(name: String, cause: String) extends Err {
+    def message = s"$name failed because $cause"
+  }
   def apply(message: String): Err = new General(message)
 }

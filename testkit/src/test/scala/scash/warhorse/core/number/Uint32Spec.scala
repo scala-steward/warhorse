@@ -3,6 +3,7 @@ package scash.warhorse.core.number
 import scash.warhorse.gen
 import scash.warhorse.core.CNumericUtil._
 import scash.warhorse.core.SerdeUtil._
+import scash.warhorse.util._
 import scash.warhorse.core._
 import scodec.bits.ByteVector
 

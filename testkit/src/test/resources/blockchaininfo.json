@@ -1,0 +1,88 @@
+{
+  "chain": "main",
+  "blocks": 631142,
+  "headers": 631142,
+  "bestblockhash": "00000000000000000001d13ecd23ca98967abed37285fe70986345df01f2cb6a",
+  "difficulty": 252063884919.1585,
+  "mediantime": 1587071335,
+  "verificationprogress": 0.9999980971571872,
+  "initialblockdownload": false,
+  "chainwork": "0000000000000000000000000000000000000000012d86c519fb206aea200201",
+  "size_on_disk": 166737172766,
+  "pruned": false,
+  "softforks": {
+    "minerfund": {
+      "type": "bip9",
+      "bip9": {
+        "status": "started",
+        "bit": 0,
+        "start_time": 1573819200,
+        "timeout": 1589544000,
+        "since": 610848,
+        "statistics": {
+          "period": 2016,
+          "threshold": 1344,
+          "elapsed": 135,
+          "count": 0,
+          "possible": true
+        }
+      },
+      "active": false
+    },
+    "minerfundabc": {
+      "type": "bip9",
+      "bip9": {
+        "status": "started",
+        "bit": 1,
+        "start_time": 1573819200,
+        "timeout": 1589544000,
+        "since": 610848,
+        "statistics": {
+          "period": 2016,
+          "threshold": 1344,
+          "elapsed": 135,
+          "count": 0,
+          "possible": true
+        }
+      },
+      "active": false
+    },
+    "minerfundbchd": {
+      "type": "bip9",
+      "bip9": {
+        "status": "started",
+        "bit": 2,
+        "start_time": 1573819200,
+        "timeout": 1589544000,
+        "since": 610848,
+        "statistics": {
+          "period": 2016,
+          "threshold": 1344,
+          "elapsed": 135,
+          "count": 0,
+          "possible": true
+        }
+      },
+      "active": false
+    },
+    "minerfundelectroncash": {
+      "type": "bip9",
+      "bip9": {
+        "status": "started",
+        "bit": 3,
+        "start_time": 1573819200,
+        "timeout": 1589544000,
+        "since": 610848,
+        "statistics": {
+          "period": 2016,
+          "threshold": 1344,
+          "elapsed": 135,
+          "count": 0,
+          "possible": true
+        }
+      },
+      "active": false
+    }
+  },
+  "warnings": ""
+}
