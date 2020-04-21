@@ -1,15 +1,19 @@
 package scash.warhorse.rpc
 
-import io.circe.Decoder
+import io.circe.{ Codec, Decoder, Encoder }
+import io.circe.generic.semiauto._
 import scash.warhorse.core.crypto.{ DoubleSha256, DoubleSha256B }
 import scash.warhorse.core.number.{ Int32, Uint32 }
 import scash.warhorse.core._
 import scodec.bits.ByteVector
 
 package object responses extends Blockchain with RpcTransactionDecoders {
-  implicit val byteVectorDecoder: Decoder[ByteVector] =
-    Decoder.decodeString
-      .emap(s => ByteVector.fromHex(s).toRight(s"Unable to parse byteVector: $s is not valid hex"))
+  implicit val byteVectorCodec: Codec[ByteVector] =
+    Codec.from(
+      Decoder.decodeString
+        .emap(s => ByteVector.fromHex(s).toRight(s"Unable to parse byteVector: $s is not valid hex")),
+      Encoder.encodeString.contramap[ByteVector](_.toHex)
+    )
 
   implicit val uint32Decoder: Decoder[Uint32] =
     Decoder.decodeLong
@@ -19,12 +23,20 @@ package object responses extends Blockchain with RpcTransactionDecoders {
   implicit val int32Decoder: Decoder[Int32] =
     Decoder.decodeInt.map(Int32(_))
 
-  implicit val doubleSha256Decoder: Decoder[DoubleSha256] =
-    byteVectorDecoder
-      .ensure(_.size <= 32, "ByteVector length is not 32 bytes")
-      .map(DoubleSha256(_))
+  implicit val doubleSha256Codec: Codec[DoubleSha256] =
+    Codec.from(
+      byteVectorCodec
+        .ensure(_.size <= 32, "ByteVector length is not 32 bytes")
+        .map(DoubleSha256(_)),
+      deriveEncoder[DoubleSha256]
+    )
 
-  implicit val doubleSha256BDecoder: Decoder[DoubleSha256B] =
-    doubleSha256Decoder.map(DoubleSha256.toBigEndian)
+  implicit val doubleSha256BDecoder: Codec[DoubleSha256B] =
+    Codec.from(
+      doubleSha256Codec.map(DoubleSha256.toBigEndian),
+      deriveEncoder[DoubleSha256B]
+    )
+
+  implicit val bigDecimalDecoder: Decoder[BigDecimal] = Decoder.decodeBigDecimal
 
 }

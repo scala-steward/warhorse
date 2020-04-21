@@ -87,12 +87,26 @@ case class GetBlockHeader(
 
 case class ChainTip(height: Int, hash: DoubleSha256B, branchlen: Int, status: String)
 
+case class GetChainTxStats(
+  time: Uint32,
+  txcount: Int,
+  window_block_count: Int,
+  window_final_block_height: Option[Int],
+  window_tx_count: Option[Int],
+  window_interval: Option[Uint32],
+  txrate: Option[BigDecimal]
+)
+
+case class RescanBlockChain(start_height: Int, stop_height: Int)
+
 trait Blockchain {
   implicit val getBlockDecoder: Decoder[GetBlock]                                 = deriveDecoder
   implicit val getBlockWithTransactionsDecoder: Decoder[GetBlockWithTransactions] = deriveDecoder
   implicit val getBlockChainInfoDecoder: Decoder[GetBlockChainInfo]               = deriveDecoder
   implicit val softforkDecoder: Decoder[Softfork]                                 = deriveDecoder
-  implicit val bip9Softfork: Decoder[Bip9Softfork]                                = deriveDecoder
+  implicit val bip9SoftforkDecoder: Decoder[Bip9Softfork]                         = deriveDecoder
   implicit val getBlockHeaderDecoder: Decoder[GetBlockHeader]                     = deriveDecoder
-  implicit val chainTip: Decoder[ChainTip]                                        = deriveDecoder
+  implicit val chainTipDecoder: Decoder[ChainTip]                                 = deriveDecoder
+  implicit val getChainTxStatsDecoder: Decoder[GetChainTxStats]                   = deriveDecoder
+  implicit val rescanBlockChainDecoder: Decoder[RescanBlockChain]                 = deriveDecoder
 }
