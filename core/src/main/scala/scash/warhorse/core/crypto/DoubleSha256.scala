@@ -10,8 +10,8 @@ protected[warhorse] case class DoubleSha256(private[crypto] val b: ByteVector)
 protected[warhorse] case class DoubleSha256B(private[crypto] val b: ByteVector)
 
 object DoubleSha256 {
-  def toBigEndian(dsha256: DoubleSha256): DoubleSha256B     = DoubleSha256B(dsha256.b.reverse)
-  def toLittleEndian(dsha256: DoubleSha256B): DoubleSha256B = DoubleSha256B(dsha256.b.reverse)
+  def toBigEndian(dsha256: DoubleSha256): DoubleSha256B    = DoubleSha256B(dsha256.b.reverse)
+  def toLittleEndian(dsha256: DoubleSha256B): DoubleSha256 = DoubleSha256(dsha256.b.reverse)
 
   def validBigEndianHex(hex: String): Result[DoubleSha256B] =
     ByteVector.fromValidHex(hex).decode[DoubleSha256B]
