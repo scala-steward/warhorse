@@ -35,9 +35,9 @@ object BlockchainRPCTest extends DefaultRunnableSpec {
     testM("getChainTips")(assertM(rpc.getChainTips)(successful[Vector[ChainTip]])),
     testM("getChainTxStats")(assertM(rpc.getChainTxStats)(successful[GetChainTxStats])),
     testM("getDifficulty")(assertM(rpc.getDifficulty)(successful[Int])),
-    testM("pruneBlockChain")(assertM(rpc.pruneBlockChain(10))(success(10))),
-    testM("rescanBlockChain")(assertM(rpc.rescanBlockChain)(successful[RescanBlockChain])),
-    testM("preciousBlock")(assertM(rpc.preciousBlock(test2Hash.require))(successful[Unit])),
+    testM("pruneBlockChain")(assertM(rpc.pruneBlockChain(10))(failure)),
+    testM("rescanBlockChain")(assertM(rpc.rescanBlockChain(1, 2))(successful[RescanBlockChain])),
+    testM("preciousBlock")(assertM(rpc.preciousBlock(test2Hash.require))(successful[Nothing])),
     testM("verifyLastBlock")(assertM(rpc.verifyLastBlock())(success(true))),
     testM("verifyChain")(assertM(rpc.verifyChain())(success(true)))
   ).provideCustomLayerShared(instance) @@ TestAspect.sequential

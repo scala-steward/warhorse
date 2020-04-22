@@ -1,7 +1,7 @@
 package scash.warhorse.rpc
 
 import io.circe.{ Codec, Decoder, Encoder }
-import io.circe.generic.semiauto._
+
 import scash.warhorse.core.crypto.{ DoubleSha256, DoubleSha256B }
 import scash.warhorse.core.number.{ Int32, Uint32 }
 import scash.warhorse.core._
@@ -28,13 +28,13 @@ package object responses extends Blockchain with RpcTransactionDecoders {
       byteVectorCodec
         .ensure(_.size <= 32, "ByteVector length is not 32 bytes")
         .map(DoubleSha256(_)),
-      deriveEncoder[DoubleSha256]
+      byteVectorCodec.contramap(_.bytes)
     )
 
   implicit val doubleSha256BDecoder: Codec[DoubleSha256B] =
     Codec.from(
       doubleSha256Codec.map(DoubleSha256.toBigEndian),
-      deriveEncoder[DoubleSha256B]
+      doubleSha256Codec.contramap[DoubleSha256B](DoubleSha256.toLittleEndian)
     )
 
   implicit val bigDecimalDecoder: Decoder[BigDecimal] = Decoder.decodeBigDecimal
