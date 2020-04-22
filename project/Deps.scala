@@ -2,7 +2,7 @@ import sbt._
 
 object Deps {
   object V {
-    val circe      = "0.12.3"
+    val circe      = "0.13.0"
     val scodec     = "1.11.7"
     val scodecbits = "1.1.14"
     val sttp       = "2.0.7"
