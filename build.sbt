@@ -33,17 +33,19 @@ val IntegrationTest = config("it") extend Test
 lazy val warhorse =
   (project in file("."))
     .settings(
-      stdSettings("warhorse")
+      stdSettings("warhorse"),
+      buildInfoSettings("warhorse")
     )
-    .settings(buildInfoSettings("warhorse"))
     .enablePlugins(BuildInfoPlugin)
     .aggregate(core, rpc, testkit)
 
 lazy val core = project
   .in(file("core"))
-  .settings(stdSettings("core"))
-  .settings(buildInfoSettings("core"))
-  .settings(libraryDependencies ++= Deps.core)
+  .settings(
+    stdSettings("core"),
+    buildInfoSettings("core"),
+    libraryDependencies ++= Deps.core
+  )
   .enablePlugins(BuildInfoPlugin)
 
 lazy val testkit = project

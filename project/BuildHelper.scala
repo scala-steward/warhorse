@@ -1,5 +1,5 @@
 import sbt._
-import sbt.Keys._
+import sbt.Keys.{ resolvers, _ }
 import sbtbuildinfo._
 import BuildInfoKeys._
 
@@ -75,6 +75,7 @@ object BuildHelper {
     crossScalaVersions := Seq(Scala212, Scala213),
     scalaVersion in ThisBuild := Scala212,
     scalacOptions := stdOptions ++ extraOptions(scalaVersion.value),
+    resolvers ++= Seq(Opts.resolver.sonatypeSnapshots),
     libraryDependencies ++=
       Seq(
         ("com.github.ghik" % "silencer-lib" % SilencerVersion % Provided)
