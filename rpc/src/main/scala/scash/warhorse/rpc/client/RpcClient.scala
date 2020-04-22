@@ -4,18 +4,16 @@ import java.util.UUID
 
 import scash.warhorse.{ Err, Result }
 import scash.warhorse.Result.{ Failure, Successful }
-
 import io.circe._
 import io.circe.generic.semiauto._
-
 import sttp.client.asynchttpclient.zio.AsyncHttpClientZioBackend
-import sttp.client.{ basicRequest, DeserializationError, HttpError }
+import sttp.client.basicRequest
 import sttp.client.circe._
 import sttp.model.Uri
-
 import zio.{ Task, ZLayer }
 
 object RpcClient {
+
   trait Service {
     def bitcoindCall[A: Decoder](cmd: String, parameters: List[Json] = List.empty): Task[Result[A]]
   }
@@ -44,22 +42,12 @@ object RpcClient {
       }
       .toLayer
 
-  private def response[A: Decoder] = asJson[RpcResponse[A]].map(
-    _ match {
-      case Right(a) =>
-        a match {
-          case RpcResponse(_, Some(e), _)    => Failure(Err.EffectError(RpcResponseError.error(e.code), e.message))
-          case RpcResponse(Some(a), None, _) => Successful(a)
-          case _                             => Failure(Err(s"The Response is not properly constructed: $a"))
-        }
-      case Left(e) =>
-        e match {
-          case DeserializationError(body, e) =>
-            Failure(Err.ParseError("Json", s"parsing $body \n failed at: ${e.getMessage()}"))
-          case HttpError(body) => Failure(Err.EffectError("Http", body))
-        }
-    }
-  )
+  private def response[A: Decoder] = asJsonAlways[RpcResponse[A]].map {
+    case Right(RpcResponse(Left(e), _)) =>
+      Failure(Err.EffectError("Rpc", s"${RpcResponseError.error(e.code)}. ${e.message}"))
+    case Right(RpcResponse(Right(a), _)) => Successful(a)
+    case Left(e)                         => Failure(Err.ParseError("Json", s"parsing ${e.body} \n failed at: ${e.getMessage()}"))
+  }
 
   private case class RpcRequest(
     method: String,
@@ -68,12 +56,19 @@ object RpcClient {
   )
 
   private case class RpcResponse[A](
-    result: Option[A],
-    error: Option[RpcResponseError],
+    result: Either[RpcResponseError, A],
     id: String
   )
 
-  private implicit def rpcResponseDecoder[A: Decoder]: Decoder[RpcResponse[A]] = deriveDecoder
-  private implicit val rpcRequestEncoder: Encoder[RpcRequest]                  = deriveEncoder
+  private implicit def decodeResponse[A: Decoder]: Decoder[RpcResponse[A]] =
+    (c: HCursor) =>
+      for {
+        errJs <- c.downField("error").as[Json]
+        resp <- if (errJs == Json.Null) c.downField("result").as[A].map(Right(_))
+               else errJs.as[RpcResponseError].map(Left(_))
+        id <- c.downField("id").as[String]
+      } yield RpcResponse[A](resp, id)
+
+  private implicit val rpcRequestEncoder: Encoder[RpcRequest] = deriveEncoder
 
 }
