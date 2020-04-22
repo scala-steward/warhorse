@@ -4,7 +4,15 @@ import scash.warhorse.core.crypto.DoubleSha256B
 import scash.warhorse.rpc
 import scash.warhorse.util._
 import scash.warhorse.rpc.client.util._
-import scash.warhorse.rpc.responses.{ ChainTip, GetBlock, GetBlockChainInfo, GetBlockHeader, GetBlockWithTransactions }
+import scash.warhorse.rpc.responses.{
+  ChainTip,
+  GetBlock,
+  GetBlockChainInfo,
+  GetBlockHeader,
+  GetBlockWithTransactions,
+  GetChainTxStats,
+  RescanBlockChain
+}
 import scodec.bits.ByteVector
 import zio.test.DefaultRunnableSpec
 import zio.test._
@@ -24,6 +32,13 @@ object BlockchainRPCTest extends DefaultRunnableSpec {
     testM("getBlockHeaderRaw")(
       assertM(rpc.getBlockHeaderRaw(genesisBlockHashB.require))(successful[ByteVector])
     ),
-    testM("getChainTips")(assertM(rpc.getChainTips)(successful[Vector[ChainTip]]))
+    testM("getChainTips")(assertM(rpc.getChainTips)(successful[Vector[ChainTip]])),
+    testM("getChainTxStats")(assertM(rpc.getChainTxStats)(successful[GetChainTxStats])),
+    testM("getDifficulty")(assertM(rpc.getDifficulty)(successful[Int])),
+    testM("pruneBlockChain")(assertM(rpc.pruneBlockChain(10))(failure)),
+    testM("rescanBlockChain")(assertM(rpc.rescanBlockChain(1, 2))(successful[RescanBlockChain])),
+    testM("preciousBlock")(assertM(rpc.preciousBlock(test2Hash.require))(successful[Nothing])),
+    testM("verifyLastBlock")(assertM(rpc.verifyLastBlock())(success(true))),
+    testM("verifyChain")(assertM(rpc.verifyChain())(success(true)))
   ).provideCustomLayerShared(instance) @@ TestAspect.sequential
 }

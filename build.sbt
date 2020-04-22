@@ -37,7 +37,7 @@ lazy val warhorse =
     )
     .settings(buildInfoSettings("warhorse"))
     .enablePlugins(BuildInfoPlugin)
-    .aggregate(core, testkit)
+    .aggregate(core, rpc, testkit)
 
 lazy val core = project
   .in(file("core"))
