@@ -60,14 +60,14 @@ object RpcClient {
     id: String
   )
 
-  private implicit def decodeResponse[A: Decoder]: Decoder[RpcResponse[A]] =
-    (c: HCursor) =>
-      for {
-        errJs <- c.downField("error").as[Json]
-        resp <- if (errJs == Json.Null) c.downField("result").as[A].map(Right(_))
-               else errJs.as[RpcResponseError].map(Left(_))
-        id <- c.downField("id").as[String]
-      } yield RpcResponse[A](resp, id)
+  private implicit def rpcResponseDecoder[A: Decoder]: Decoder[RpcResponse[A]] =
+    for {
+      resp <- Decoder[Json].at("error").flatMap[Either[RpcResponseError, A]] {
+               case Json.Null => Decoder[A].at("result").map(Right(_))
+               case _         => Decoder[RpcResponseError].at("error").map(Left(_))
+             }
+      id <- Decoder.decodeString.at("id")
+    } yield RpcResponse[A](resp, id)
 
   private implicit val rpcRequestEncoder: Encoder[RpcRequest] = deriveEncoder
 
