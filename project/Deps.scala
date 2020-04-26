@@ -6,7 +6,7 @@ object Deps {
     val scodec     = "1.11.7"
     val scodecbits = "1.1.14"
     val sttp       = "2.0.9"
-    val zio        = "1.0.0-RC18-2+147-6dcf6568-SNAPSHOT"
+    val zio        = "1.0.0-RC18-2+195-47f70a83-SNAPSHOT"
   }
 
   object Libs {
