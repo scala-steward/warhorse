@@ -1,4 +1,4 @@
-package scash.warhorse.core.crypto
+package scash.warhorse.core.crypto.hash
 
 import scash.warhorse.Err
 import scash.warhorse.Result.{ Failure, Successful }

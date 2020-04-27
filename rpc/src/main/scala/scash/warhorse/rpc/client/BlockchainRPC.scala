@@ -1,12 +1,12 @@
 package scash.warhorse.rpc.client
 
 import scash.warhorse.Result
-import scash.warhorse.core.crypto.DoubleSha256._
-import scash.warhorse.core.crypto.DoubleSha256B
+import scash.warhorse.core.crypto.hash.DoubleSha256._
 import scash.warhorse.rpc.responses._
 import zio.RIO
 import io.circe.syntax._
 import io.circe.Decoder
+import scash.warhorse.core.crypto.hash.DoubleSha256B
 import scodec.bits.ByteVector
 
 trait BlockchainRPC {

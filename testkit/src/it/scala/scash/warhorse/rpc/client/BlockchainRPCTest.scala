@@ -1,6 +1,6 @@
 package scash.warhorse.rpc.client
 
-import scash.warhorse.core.crypto.DoubleSha256B
+import scash.warhorse.core.crypto.hash.DoubleSha256B
 import scash.warhorse.rpc
 import scash.warhorse.util._
 import scash.warhorse.rpc.client.util._

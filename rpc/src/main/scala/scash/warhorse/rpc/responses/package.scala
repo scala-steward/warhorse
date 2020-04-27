@@ -1,10 +1,10 @@
 package scash.warhorse.rpc
 
 import io.circe.{ Codec, Decoder, Encoder }
-
-import scash.warhorse.core.crypto.{ DoubleSha256, DoubleSha256B }
+import scash.warhorse.core.crypto.hash.DoubleSha256B
 import scash.warhorse.core.number.{ Int32, Uint32 }
 import scash.warhorse.core._
+import scash.warhorse.core.crypto.hash.{ DoubleSha256, DoubleSha256B }
 import scodec.bits.ByteVector
 
 package object responses extends Blockchain with RpcTransactionDecoders {

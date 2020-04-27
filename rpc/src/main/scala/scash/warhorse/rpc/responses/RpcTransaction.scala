@@ -1,12 +1,11 @@
 package scash.warhorse.rpc.responses
 
-import scash.warhorse.core.crypto.DoubleSha256B
 import scash.warhorse.core.number.Uint32
 import cats.syntax.functor._
-
 import io.circe.generic.semiauto.deriveDecoder
 import io.circe.Decoder
 import io.circe.generic.auto._
+import scash.warhorse.core.crypto.hash.DoubleSha256B
 
 case class RpcTransaction(
   txid: DoubleSha256B,
