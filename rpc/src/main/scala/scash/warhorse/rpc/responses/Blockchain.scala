@@ -1,9 +1,9 @@
 package scash.warhorse.rpc.responses
 
-import scash.warhorse.core.crypto.DoubleSha256B
 import scash.warhorse.core.number._
 import io.circe.Decoder
 import io.circe.generic.semiauto._
+import scash.warhorse.core.crypto.hash.DoubleSha256B
 import scodec.bits.ByteVector
 
 import scala.Predef.Map

@@ -1,11 +1,11 @@
-package scash.warhorse.core.crypto
+package scash.warhorse.core.crypto.hash
 
-import scash.warhorse.util._
-import scash.warhorse.core._
-import scash.warhorse.core.crypto.Sha256._
+import scash.warhorse.core.crypto.hash.Sha256._
 import scash.warhorse.gen
+import scash.warhorse.util.failure
+import scash.warhorse.core._
 import zio.test.Assertion.equalTo
-import zio.test.{ DefaultRunnableSpec, _ }
+import zio.test._
 
 object Sha256Spec extends DefaultRunnableSpec {
   val spec = suite("Sha256Spec")(

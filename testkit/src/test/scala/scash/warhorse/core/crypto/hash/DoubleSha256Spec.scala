@@ -1,8 +1,8 @@
-package scash.warhorse.core.crypto
+package scash.warhorse.core.crypto.hash
 
 import scash.warhorse.util._
 import scash.warhorse.core._
-import scash.warhorse.core.crypto.DoubleSha256._
+import scash.warhorse.core.crypto.hash.DoubleSha256._
 import scash.warhorse.gen
 import zio.test.Assertion.equalTo
 import zio.test.{ DefaultRunnableSpec, _ }

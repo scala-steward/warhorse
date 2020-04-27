@@ -1,9 +1,9 @@
-package scash.warhorse.core.crypto
+package scash.warhorse.core.crypto.hash
 
 import scash.warhorse.Result
-import scash.warhorse.core.crypto.Sha256.sha256Serde
-import scash.warhorse.core.typeclass.Serde
 import scash.warhorse.core._
+import scash.warhorse.core.crypto.hash.Sha256.sha256Serde
+import scash.warhorse.core.typeclass.Serde
 import scodec.bits.ByteVector
 
 protected[warhorse] case class DoubleSha256(private[crypto] val b: ByteVector)

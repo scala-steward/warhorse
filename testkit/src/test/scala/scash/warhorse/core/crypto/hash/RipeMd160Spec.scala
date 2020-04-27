@@ -1,13 +1,12 @@
-package scash.warhorse.core.crypto
+package scash.warhorse.core.crypto.hash
 
-import scash.warhorse.core._
-import scash.warhorse.core.crypto.RipeMd160._
-import scash.warhorse.util._
+import scash.warhorse.core.crypto.hash.RipeMd160._
 import scash.warhorse.gen
-
-import zio.test.DefaultRunnableSpec
-import zio.test._
+import scash.warhorse.util.failure
+import scash.warhorse.core._
 import zio.test.Assertion.equalTo
+
+import zio.test._
 
 object RipeMd160Spec extends DefaultRunnableSpec {
   val spec = suite("RipeMd160Spec")(

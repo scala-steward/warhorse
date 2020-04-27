@@ -1,6 +1,6 @@
 package scash.warhorse.rpc.client
 
-import scash.warhorse.core.crypto.DoubleSha256
+import scash.warhorse.core.crypto.hash.DoubleSha256
 import zio.test.TestFailure
 import sttp.client._
 
