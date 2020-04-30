@@ -73,9 +73,9 @@ object BuildHelper {
   def stdSettings(prjName: String) = Seq(
     name := s"$prjName",
     crossScalaVersions := Seq(Scala212, Scala213),
-    scalaVersion in ThisBuild := Scala212,
+    scalaVersion in ThisBuild := Scala213,
     scalacOptions := stdOptions ++ extraOptions(scalaVersion.value),
-    resolvers ++= Seq(Opts.resolver.sonatypeSnapshots),
+    resolvers ++= Seq(Opts.resolver.sonatypeSnapshots, Resolver.bintrayRepo("scala-cash", "io")),
     libraryDependencies ++=
       Seq(
         ("com.github.ghik" % "silencer-lib" % SilencerVersion % Provided)
