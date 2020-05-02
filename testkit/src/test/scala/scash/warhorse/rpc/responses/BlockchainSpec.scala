@@ -1,6 +1,5 @@
 package scash.warhorse.rpc.responses
 
-import scash.warhorse.rpc.responses.util._
 import scash.warhorse.util._
 
 import zio.test.{ suite, DefaultRunnableSpec }
@@ -9,16 +8,16 @@ import zio.test._
 object BlockchainSpec extends DefaultRunnableSpec {
   val spec = suite("BlockchainSpec")(
     testM("GetBlock")(
-      assertM(parseJsonfromFile[GetBlock]("rpcblock.json"))(successful[GetBlock])
+      assertM(parseJsonfromFile[GetBlock]("rpcblock.json"))(success[GetBlock])
     ),
     testM("GetBlockWithTransactions")(
-      assertM(parseJsonfromFile[GetBlockWithTransactions]("rpcblocktx.json"))(successful[GetBlockWithTransactions])
+      assertM(parseJsonfromFile[GetBlockWithTransactions]("rpcblocktx.json"))(success[GetBlockWithTransactions])
     ),
     testM("GetBlockChainInfo")(
-      assertM(parseJsonfromFile[GetBlockChainInfo]("blockchaininfo.json"))(successful[GetBlockChainInfo])
+      assertM(parseJsonfromFile[GetBlockChainInfo]("blockchaininfo.json"))(success[GetBlockChainInfo])
     ),
-    test("GetBlockheader")(assert(parseJson[GetBlockHeader](blockheader))(successful[GetBlockHeader])),
-    test("ChainTips")(assert(parseJson[Vector[ChainTip]](chaintips))(successful[Vector[ChainTip]]))
+    test("GetBlockheader")(assert(parseJson[GetBlockHeader](blockheader))(success[GetBlockHeader])),
+    test("ChainTips")(assert(parseJson[Vector[ChainTip]](chaintips))(success[Vector[ChainTip]]))
   )
 
   val chaintips = """[

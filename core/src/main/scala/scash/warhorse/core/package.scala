@@ -5,7 +5,7 @@ import scash.warhorse.core.typeclass.{ CNumeric, CNumericSyntax, SerdeSyntax }
 package object core extends SerdeSyntax with CNumericSyntax {
   import scala.{ Predef => P }
 
-  implicit val bigIntNumeric: CNumeric[BigInt] =
+  implicit val bigInt64Numeric: CNumeric[BigInt] =
     CNumeric[BigInt](
       0xFFFFFFFFFFFFFFFFL,
       BigInt(Long.MinValue),
