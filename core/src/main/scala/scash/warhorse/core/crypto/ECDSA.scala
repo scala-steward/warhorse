@@ -23,7 +23,7 @@ object ECDSA {
       if (msg.size != 32) Failure(Err.BoundsError("ECDSA Sign", "msg must be exactly 32 bytes", s"msg ${msg.size}"))
       else {
         val signer     = new BCSigner(new HMacDSAKCalculator(new SHA256Digest))
-        val pkeyParams = new ECPrivateKeyParameters(BigInt(privkey.hex, 16).bigInteger, e.domain)
+        val pkeyParams = new ECPrivateKeyParameters(privkey.toBigInteger, e.domain)
         signer.init(true, pkeyParams)
         val Array(r, s) = signer.generateSignature(msg.toArray)
         (lowS _ andThen (derEncoding(r, _)) andThen (Signature(_)) andThen (Successful(_)))(s)
@@ -39,7 +39,7 @@ object ECDSA {
           )
         )
       else {
-        val pkeypoint  = e.domain.getCurve.decodePoint(pubkey.bytes.toArray)
+        val pkeypoint  = e.domain.getCurve.decodePoint(pubkey.toArray)
         val pkeyparams = new ECPublicKeyParameters(pkeypoint, e.domain)
         val signer     = new BCSigner
         signer.init(false, pkeyparams)

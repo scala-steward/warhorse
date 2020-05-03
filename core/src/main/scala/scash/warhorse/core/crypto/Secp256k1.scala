@@ -31,7 +31,7 @@ object Secp256k1 {
       genPublicKey(privateKey, true)
 
     private def genPublicKey(privateKey: PrivateKey, compressed: Boolean): Result[PublicKey] = {
-      val pointQ = secp256K1Curve.domain.getG.multiply(new BigInteger(1, privateKey.bytes.toArray))
+      val pointQ = secp256K1Curve.domain.getG.multiply(new BigInteger(1, privateKey.toArray))
       PublicKey.apply(pointQ.getEncoded(compressed).toByteVector)
     }
 
