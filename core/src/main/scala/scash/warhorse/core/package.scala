@@ -1,6 +1,7 @@
 package scash.warhorse
 
 import scash.warhorse.core.typeclass.{ CNumeric, CNumericSyntax, SerdeSyntax }
+import scodec.bits.ByteVector
 
 package object core extends SerdeSyntax with CNumericSyntax {
   import scala.{ Predef => P }
@@ -26,4 +27,13 @@ package object core extends SerdeSyntax with CNumericSyntax {
       Int.MaxValue
     )(P.identity[Int], _.toInt)
 
+  implicit class BigIntOps(bigInt: BigInt) {
+    def toByteVector = bigInt.toByteArray.toByteVector
+
+    def toHex: String = toByteVector.toHex
+  }
+
+  implicit class ArrayByteOps(array: Array[Byte]) {
+    def toByteVector = ByteVector(array)
+  }
 }

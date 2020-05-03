@@ -3,6 +3,7 @@ package scash.warhorse.core.crypto.hash
 import scash.warhorse.Err
 import scash.warhorse.Result.{ Failure, Successful }
 import scash.warhorse.core.typeclass.Serde
+
 import scodec.DecodeResult
 import scodec.bits.ByteVector
 

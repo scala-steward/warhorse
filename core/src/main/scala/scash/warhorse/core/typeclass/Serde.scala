@@ -1,5 +1,7 @@
 package scash.warhorse.core.typeclass
 
+import java.math.BigInteger
+
 import scash.warhorse.{ Err, Result }
 import scash.warhorse.Result.{ Failure, Successful }
 import scodec.{ Codec, DecodeResult }
@@ -24,8 +26,6 @@ trait Serde[A] {
 }
 
 object Serde {
-  //implicit def toCodec[A](a: Serde[A]): Codec[A] = a.codec
-
   def apply[A](implicit c: Serde[A]): Serde[A] = c
 
   def apply[A](
@@ -46,18 +46,11 @@ object Serde {
 
 trait SerdeSyntax {
   implicit class SerdeSyntaxOps[A: Serde](a: A) {
-    def bytes: ByteVector = Serde[A].encode(a).require
-    def hex: String       = bytes.toHex
-  }
-
-  implicit class BigIntOps(bigInt: BigInt) {
-    def toByteVector = bigInt.toByteArray.toByteVector
-
-    def toHex: String = toByteVector.toHex
-  }
-
-  implicit class ArrayByteOps(array: Array[Byte]) {
-    def toByteVector = ByteVector(array)
+    def bytes: ByteVector        = Serde[A].encode(a).require
+    def hex: String              = bytes.toHex
+    def toBigInt: BigInt         = bytes.toBigInt
+    def toArray: Array[Byte]     = bytes.toArray
+    def toBigInteger: BigInteger = toBigInt.bigInteger
   }
 
   implicit class ByteVectorOps(byteVector: ByteVector) {
@@ -78,5 +71,8 @@ trait SerdeSyntax {
     def decodeExact_[A: Serde]: A = decodeExact.require
 
     def toBigInt: BigInt = BigInt(byteVector.toHex, 16)
+
+    def toBigInteger: BigInteger = toBigInt.bigInteger
+
   }
 }

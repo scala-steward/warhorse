@@ -1,5 +1,6 @@
 package scash.warhorse.core.crypto.hash
 
+import org.bouncycastle.crypto.digests.SHA256Digest
 import scash.warhorse.Err
 import scash.warhorse.Result.{ Failure, Successful }
 import scash.warhorse.core.typeclass.Serde
@@ -7,6 +8,10 @@ import scodec.DecodeResult
 import scodec.bits.ByteVector
 
 object Sha256 {
+  def hash(msg: ByteVector): Sha256 = Sha256(genHash(new SHA256Digest)(msg))
+
+  def hash(str: String): Sha256 = hash(ByteVector(str.getBytes))
+
   protected[warhorse] case class Sha256(private[crypto] val b: ByteVector)
   protected[warhorse] case class Sha256B(private[crypto] val b: ByteVector)
 
