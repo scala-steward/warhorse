@@ -12,11 +12,11 @@ case class PrivateKey(b: ByteVector)
 object PrivateKey {
 
   def apply(b: ByteVector): Result[PrivateKey] =
-    if (b.size != 32) Failure(Err.BoundsError("PrivateKey", s"exactly 32 bytes", s"size ${b.size}"))
+    if (b.size != 32) Failure(Err.BoundsError("PrivateKey", s"exactly 32 bytes", s"size is not 32 bytes"))
     else inRange(b.toBigInt, _ => Successful(new PrivateKey(b)))
 
   def apply(bigInt: BigInt): Result[PrivateKey] =
-    inRange(bigInt, b => apply(b.toByteVector.dropWhile(_ == 0.toByte).padLeft(32)))
+    inRange(bigInt, b => apply(b.toUnsignedByteVector))
 
   implicit val sha256Serde: Serde[PrivateKey] = Serde[PrivateKey](
     (a: PrivateKey) => Successful(a.b),

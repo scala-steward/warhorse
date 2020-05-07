@@ -50,7 +50,7 @@ trait SerdeSyntax {
     def hex: String              = bytes.toHex
     def toBigInt: BigInt         = bytes.toBigInt
     def toArray: Array[Byte]     = bytes.toArray
-    def toBigInteger: BigInteger = toBigInt.bigInteger
+    def toBigInteger: BigInteger = bytes.toBigInteger
   }
 
   implicit class ByteVectorOps(byteVector: ByteVector) {
@@ -70,9 +70,9 @@ trait SerdeSyntax {
     /** Returns the successful value if present; otherwise throws an `IllegalArgumentException` if decodeExact fails. */
     def decodeExact_[A: Serde]: A = decodeExact.require
 
-    def toBigInt: BigInt = BigInt(byteVector.toHex, 16)
+    def toBigInt: BigInt = BigInt(1, byteVector.toArray)
 
-    def toBigInteger: BigInteger = toBigInt.bigInteger
+    def toBigInteger: BigInteger = new BigInteger(1, byteVector.toArray)
 
   }
 }

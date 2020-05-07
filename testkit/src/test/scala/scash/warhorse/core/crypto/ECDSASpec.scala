@@ -20,7 +20,7 @@ object ECDSASpec extends DefaultRunnableSpec {
       checkM(gen.keyPair, gen.sha256) {
         case ((priv, pub), msg) =>
           val sig = crypto.sign[ECDSA](msg, priv).require
-          assertM(secp256k1.verifyECDSA(msg.toArray, sig.b.toArray, pub.bytes.toArray))(isTrue)
+          assertM(secp256k1.verifyECDSA(msg.toArray, sig.bytes.toArray, pub.toArray))(isTrue)
       }
     },
     testM("verify") {
@@ -28,9 +28,19 @@ object ECDSASpec extends DefaultRunnableSpec {
         case ((priv, pub), msg) =>
           val ver =
             secp256k1
-              .signECDSA(msg.toArray, priv.bytes.toArray)
+              .signECDSA(msg.toArray, priv.toArray)
               .map(s => crypto.verify[ECDSA](msg, ByteVector(s), pub))
           assertM(ver)(success(true))
+      }
+    },
+    testM("sign&verify") {
+      check(gen.keyPair, gen.sha256) {
+        case ((priv, pub), msg) =>
+          val ans = for {
+            sig <- crypto.sign[ECDSA](msg, priv)
+            ver <- crypto.verify[ECDSA](msg, sig.bytes, pub)
+          } yield ver
+          assert(ans)(success(true))
       }
     },
     testM("deterministic")(
@@ -43,7 +53,7 @@ object ECDSASpec extends DefaultRunnableSpec {
                 sec <- PrivateKey(data.privHex)
                 pub <- sec.genPublicKey
                 sig <- crypto.sign[ECDSA](msg, sec)
-                ver <- crypto.verify[ECDSA](msg, sig.b, pub)
+                ver <- crypto.verify[ECDSA](msg, sig.bytes, pub)
               } yield (sig, ver)
               assert(ans)(success((Signature(data.exp), true)))
             }
