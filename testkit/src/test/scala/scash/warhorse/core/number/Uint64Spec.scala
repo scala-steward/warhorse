@@ -38,15 +38,15 @@ object Uint64Spec extends DefaultRunnableSpec {
         )
       ),
       test("0xFFFFFFFF  == Uint32.max")(
-        assert((ByteVector.fill(4)(0xFF) ++ ByteVector.fill(4)(0)).decode[Uint64])(success(Uint64(4294967295L)))
+        assert((ByteVector.fill(4)(0xff) ++ ByteVector.fill(4)(0)).decode[Uint64])(success(Uint64(4294967295L)))
       ),
       test("0xFF == Uint8.max")(
-        assert((0xFF.toByte +: ByteVector.fill(7)(0)).decode[Uint64])(success(Uint64(255)))
+        assert((0xff.toByte +: ByteVector.fill(7)(0)).decode[Uint64])(success(Uint64(255)))
       ),
       test("max to hex")(assert(Uint64.max.hex)(equalTo("ffffffffffffffff"))),
       test("min to hex")(assert(Uint64.min.hex)(equalTo("0000000000000000"))),
       test("0xffffffffffffffff == Uint64.max")(
-        assert(ByteVector.fill(8)(0xFF).decode[Uint64])(success(Uint64.max))
+        assert(ByteVector.fill(8)(0xff).decode[Uint64])(success(Uint64.max))
       ),
       test("too large bytevector 0")(assert(ByteVector.fill(9)(0).decodeExact[Uint64])(failure)),
       test("too large bytevector 1")(assert(ByteVector.fill(9)(1).decodeExact[Uint64])(failure))

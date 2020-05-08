@@ -32,11 +32,11 @@ object Int32Spec extends DefaultRunnableSpec {
       test("sym max")(symmetry(Int32.max)),
       test("0")(assert(ByteVector.low(4).decodeExact[Int32])(success(Int32.zero))),
       test("1")(assert((1.toByte +: ByteVector.low(3)).decodeExact[Int32])(success(Int32.one))),
-      test("-1")(assert(ByteVector.fill(4)(0xFF).decodeExact[Int32])(success(-Int32.one))),
+      test("-1")(assert(ByteVector.fill(4)(0xff).decodeExact[Int32])(success(-Int32.one))),
       test("max to hex")(assert(Int32.max.hex)(equalTo("ffffff7f"))),
       test("min to hex")(assert(Int32.min.hex)(equalTo("00000080"))),
       test("0xffffff7f == Int32.max")(
-        assert((ByteVector.fill(3)(0xFF) :+ 0x7F.toByte).decodeExact[Int32])(success(Int32.max))
+        assert((ByteVector.fill(3)(0xff) :+ 0x7f.toByte).decodeExact[Int32])(success(Int32.max))
       ),
       test("0x00000080 == Int32.min")(
         assert((ByteVector.low(3) :+ 0x80.toByte).decodeExact[Int32])(success(Int32.min))

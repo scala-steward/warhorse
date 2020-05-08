@@ -12,7 +12,7 @@ object Deps {
   }
 
   object Libs {
-    val bouncycastle = "org.bouncycastle"             % "bcprov-jdk15on"                 % V.bouncyCastle
+    val bouncycastle = "org.bouncycastle"              % "bcprov-jdk15on"                % V.bouncyCastle
     val circeCore    = "io.circe"                     %% "circe-core"                    % V.circe
     val circeGen     = "io.circe"                     %% "circe-generic"                 % V.circe
     val scodecbits   = "org.scodec"                   %% "scodec-bits"                   % V.scodecbits withSources () withJavadoc ()

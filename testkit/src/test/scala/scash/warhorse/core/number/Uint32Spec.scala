@@ -34,7 +34,7 @@ object Uint32Spec extends DefaultRunnableSpec {
       test("1")(assert(ByteVector(1, 0, 0, 0).decode[Uint32])(success(Uint32.one))),
       test("16777216")(assert(ByteVector(0, 0, 0, 1).decode[Uint32])(success(Uint32(16777216)))),
       test("65536")(assert(ByteVector(0, 0, 1, 0).decode[Uint32])(success(Uint32(65536)))),
-      test("0xFF")(assert(ByteVector(0xFF, 0, 0, 0).decode[Uint32])(success(Uint32(255)))),
+      test("0xFF")(assert(ByteVector(0xff, 0, 0, 0).decode[Uint32])(success(Uint32(255)))),
       test("max to hex")(assert(Uint32.max.hex)(equalTo("ffffffff"))),
       test("min to hex")(assert(Uint32.min.hex)(equalTo("00000000"))),
       test("0xffffffff == Uint32.max")(

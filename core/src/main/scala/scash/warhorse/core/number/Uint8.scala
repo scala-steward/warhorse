@@ -24,6 +24,6 @@ object Uint8 {
     Serde[Uint8](uint8L.xmap[Uint8](apply(_), _.num))
 
   implicit val uint8Numeric: CNumeric[Uint8] =
-    CNumeric[Uint8](0xFF, min, max)(_.num, apply(_))
+    CNumeric[Uint8](0xff, min, max)(_.num, apply(_))
 
 }

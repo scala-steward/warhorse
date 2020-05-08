@@ -26,5 +26,5 @@ object Uint64 {
     )
 
   implicit val uint64Numeric: CNumeric[Uint64] =
-    CNumeric[Uint64](0xFFFFFFFFFFFFFFFFL, min, max)(_.num, apply(_))
+    CNumeric[Uint64](0xffffffffffffffffL, min, max)(_.num, apply(_))
 }

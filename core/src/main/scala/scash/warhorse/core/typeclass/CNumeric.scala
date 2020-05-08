@@ -2,7 +2,7 @@ package scash.warhorse.core.typeclass
 
 import scala.util.Try
 
-trait CNumeric[A] {
+trait CNumeric[A]    {
   def andMask: BigInt
   def num: A => BigInt
   def lift: BigInt => A
@@ -30,7 +30,7 @@ trait CNumeric[A] {
   def shiftR(a: A, a1: Int): A = lift(num(a) >> a1)
 }
 
-object CNumeric {
+object CNumeric      {
   /*
   def consistencyLaw[A: CNumeric](a: A): Boolean =
     CNumeric[A].lift(CNumeric[A].num(a)) === a

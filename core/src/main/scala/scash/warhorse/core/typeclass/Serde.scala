@@ -7,7 +7,7 @@ import scash.warhorse.Result.{ Failure, Successful }
 import scodec.{ Codec, DecodeResult }
 import scodec.bits.{ BitVector, ByteVector }
 
-trait Serde[A] {
+trait Serde[A]    {
   def codec: Codec[A]
 
   def xmap[B](fa: A => B, fb: B => A): Serde[B] = Serde(codec.xmap(fa, fb))
@@ -25,7 +25,7 @@ trait Serde[A] {
     Result.fromAttempt(codec.encode(a).map(_.toByteVector))
 }
 
-object Serde {
+object Serde      {
   def apply[A](implicit c: Serde[A]): Serde[A] = c
 
   def apply[A](
@@ -39,9 +39,10 @@ object Serde {
       )
     )
 
-  def apply[A](c: Codec[A]): Serde[A] = new Serde[A] {
-    def codec: Codec[A] = c
-  }
+  def apply[A](c: Codec[A]): Serde[A] =
+    new Serde[A] {
+      def codec: Codec[A] = c
+    }
 }
 
 trait SerdeSyntax {
@@ -62,13 +63,14 @@ trait SerdeSyntax {
     def decode[A: Serde]: Result[A] = Serde[A].decodeValue(byteVector)
 
     /** Decode Bytevector into type `Result[A]`. if there are remainder bytes it will return Failure */
-    def decodeExact[A: Serde]: Result[A] = Serde[A].decode(byteVector).flatMap { a =>
-      if (a.remainder.isEmpty) Successful(a.value)
-      else Failure(Err(s"Decoding left remainder bits: ${a.remainder.toByteVector.size}"))
-    }
+    def decodeExact[A: Serde]: Result[A] =
+      Serde[A].decode(byteVector).flatMap { a =>
+        if (a.remainder.isEmpty) Successful(a.value)
+        else Failure(Err(s"Decoding left remainder bits: ${a.remainder.toByteVector.size}"))
+      }
 
     /** Returns the successful value if present; otherwise throws an `IllegalArgumentException` if decodeExact fails. */
-    def decodeExact_[A: Serde]: A = decodeExact.require
+    def decodeExact_[A: Serde]: A        = decodeExact.require
 
     def toBigInt: BigInt = BigInt(1, byteVector.toArray)
 

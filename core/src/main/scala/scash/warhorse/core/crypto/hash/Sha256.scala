@@ -17,7 +17,7 @@ object Sha256 {
 
   private val bsize = 32L
 
-  implicit val sha256Serde: Serde[Sha256] = Serde[Sha256](
+  implicit val sha256Serde: Serde[Sha256]   = Serde[Sha256](
     (a: Sha256) => Successful(a.b),
     (b: ByteVector) =>
       if (b.size >= bsize) Successful(DecodeResult(Sha256(b.take(bsize)), b.drop(bsize).bits))

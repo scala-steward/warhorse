@@ -22,8 +22,8 @@ object ECDSA {
     def sign(msg: ByteVector, privkey: PrivateKey): Result[Signature] =
       if (msg.size != 32) Failure(Err.BoundsError("ECDSA Sign", "msg must be exactly 32 bytes", s"msg ${msg.size}"))
       else {
-        val signer     = new BCSigner(nonceRFC6979)
-        val pkeyParams = new ECPrivateKeyParameters(privkey.toBigInteger, e.domain)
+        val signer      = new BCSigner(nonceRFC6979)
+        val pkeyParams  = new ECPrivateKeyParameters(privkey.toBigInteger, e.domain)
         signer.init(true, pkeyParams)
         val Array(r, s) = signer.generateSignature(msg.toArray)
         (lowS _ andThen (derEncoding(r, _)) andThen (Signature(_)) andThen (Successful(_)))(s)

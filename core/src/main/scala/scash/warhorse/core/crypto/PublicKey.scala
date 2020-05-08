@@ -8,26 +8,27 @@ import scodec.bits.ByteVector
 
 sealed trait PublicKey { self =>
 
-  def compress: PublicKey = self match {
-    case c: PublicKey.PKeyCompressed => c
-    case u: PublicKey.PKeyUnCompressed => {
-      val prefix =
-        if ((u.b(64) & 0xFF) % 2 == 0) 0x02.toByte
-        else 0x03.toByte
-      PublicKey.PKeyCompressed(prefix +: u.b.slice(1, 33))
+  def compress: PublicKey =
+    self match {
+      case c: PublicKey.PKeyCompressed   => c
+      case u: PublicKey.PKeyUnCompressed =>
+        val prefix =
+          if ((u.b(64) & 0xff) % 2 == 0) 0x02.toByte
+          else 0x03.toByte
+        PublicKey.PKeyCompressed(prefix +: u.b.slice(1, 33))
     }
-  }
 }
 
 object PublicKey {
   private case class PKeyCompressed(b: ByteVector)   extends PublicKey
   private case class PKeyUnCompressed(b: ByteVector) extends PublicKey
 
-  def apply(b: ByteVector): Result[PublicKey] = b.size match {
-    case 33 if b(0) == 0x02 || b(0) == 0x03 => Successful(PKeyCompressed(b))
-    case 65 if b(0) == 0x04                 => Successful(PKeyUnCompressed(b))
-    case _                                  => Failure(Err.BoundsError("publickey", "is not compressed nor uncompressed", b.toHex))
-  }
+  def apply(b: ByteVector): Result[PublicKey] =
+    b.size match {
+      case 33 if b(0) == 0x02 || b(0) == 0x03 => Successful(PKeyCompressed(b))
+      case 65 if b(0) == 0x04                 => Successful(PKeyUnCompressed(b))
+      case _                                  => Failure(Err.BoundsError("publickey", "is not compressed nor uncompressed", b.toHex))
+    }
 
   implicit val publicKeySerde: Serde[PublicKey] =
     Serde(

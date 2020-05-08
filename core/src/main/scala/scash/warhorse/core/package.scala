@@ -10,21 +10,21 @@ package object core extends SerdeSyntax with CNumericSyntax {
 
   implicit val bigInt64Numeric: CNumeric[BigInt] =
     CNumeric[BigInt](
-      0xFFFFFFFFFFFFFFFFL,
+      0xffffffffffffffffL,
       BigInt(Long.MinValue),
       BigInt(Long.MaxValue)
     )(P.identity, P.identity)
 
   implicit val longNumeric: CNumeric[Long] =
     CNumeric[Long](
-      0xFFFFFFFFFFFFFFFFL,
+      0xffffffffffffffffL,
       Long.MinValue,
       Long.MaxValue
     )(P.identity[Long], _.toLong)
 
   implicit val intNumeric: CNumeric[Int] =
     CNumeric[Int](
-      0xFFFFFFFF,
+      0xffffffff,
       Int.MinValue,
       Int.MaxValue
     )(P.identity[Int], _.toInt)

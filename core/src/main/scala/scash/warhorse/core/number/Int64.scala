@@ -23,5 +23,5 @@ object Int64 {
     Serde[Int64](int64L.xmap[Int64](apply(_), _.num))
 
   implicit val int64Numeric: CNumeric[Int64] =
-    CNumeric[Int64](0xFFFFFFFFFFFFFFFFL, min, max)(_.num, apply(_))
+    CNumeric[Int64](0xffffffffffffffffL, min, max)(_.num, apply(_))
 }

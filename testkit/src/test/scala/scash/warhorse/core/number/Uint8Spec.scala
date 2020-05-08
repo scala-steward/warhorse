@@ -25,7 +25,7 @@ object Uint8Spec extends DefaultRunnableSpec {
       testM("bitwiseAnd &")(check(gen.uint8, gen.uint8)(bitwiseAnd)),
       testM("test safe")(check(gen.positiveBigInts)(safe[Uint8](i => Uint8.safe(i.toInt)))),
       test("out of bounds")(outofBounds[Uint8]),
-      test("test bounds")(testBounds[Uint8](BigInt(0), BigInt(0xFF)))
+      test("test bounds")(testBounds[Uint8](BigInt(0), BigInt(0xff)))
     ),
     suite("Serde")(
       testM("symmetry")(check(gen.uint8)(symmetry)),
@@ -34,7 +34,7 @@ object Uint8Spec extends DefaultRunnableSpec {
       test("sym max")(symmetry(Uint8.max)),
       test("0")(assert(ByteVector(0.toByte).decode[Uint8])(success(Uint8.min))),
       test("1")(assert(ByteVector(1.toByte).decode[Uint8])(success(Uint8.one))),
-      test("0xFF")(assert(ByteVector(0xFF.toByte).decode[Uint8])(success(Uint8.max))),
+      test("0xFF")(assert(ByteVector(0xff.toByte).decode[Uint8])(success(Uint8.max))),
       test("255")(assert(ByteVector(255.toByte).decode[Uint8])(success(Uint8.max))),
       test("max to hex")(assert(Uint8.max.hex)(equalTo("ff"))),
       test("min to hex")(assert(Uint8.min.hex)(equalTo("00"))),

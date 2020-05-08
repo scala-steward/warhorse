@@ -38,11 +38,11 @@ object Schnorr {
         /** Calculate k */
         val nonceFunction = nonceRFC6979
         nonceFunction.init(N, new ECPrivateKeyParameters(d, ecc.domain).getD, msg.toArray, additionalData)
-        val k0 = nonceFunction.nextK.mod(N)
+        val k0            = nonceFunction.nextK.mod(N)
 
         /** R = k * G. Negate nonce if R.y is not a quadratic residue */
-        val R = G.multiply(k0).normalize
-        val k =
+        val R        = G.multiply(k0).normalize
+        val k        =
           if (hasSquareY(R)) k0
           else N.subtract(k0)
 
@@ -84,7 +84,7 @@ object Schnorr {
               else {
 
                 /** e = SHA256(r || compressed(P) || m) mod n */
-                val e = Sha256
+                val e  = Sha256
                   .hash(r ++ P.getEncoded(true).toByteVector ++ msg)
                   .toBigInteger
                   .mod(N)

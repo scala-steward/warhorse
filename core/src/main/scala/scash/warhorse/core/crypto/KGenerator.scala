@@ -102,7 +102,7 @@ class KGenerator(digest: Digest) extends DSAKCalculator {
         System.arraycopy(V, 0, t, tOff, len)
         tOff += len
       }
-      val k = bitsToInt(t)
+      val k    = bitsToInt(t)
       if (k.compareTo(BigInteger.ZERO) > 0 && k.compareTo(n) < 0) return k
       hMac.update(V, 0, V.length)
       hMac.update(0x00.toByte)
