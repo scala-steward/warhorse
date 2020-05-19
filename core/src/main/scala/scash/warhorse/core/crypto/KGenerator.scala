@@ -18,6 +18,7 @@ import org.bouncycastle.util.{ Arrays, BigIntegers }
  *
  * Its the same implementation as HMacDSAKCalculator with the added optional parameter including an additional k'
  * as indicated in https://tools.ietf.org/html/rfc6979#section-3.6
+ * This is a stand alone implementation that purposefuly doesnt use anything else from this library
  * K = HMAC_K(V || 0x00 || bytes(x) || bytes(h1) || k')
  */
 class KGenerator(digest: Digest) extends DSAKCalculator {

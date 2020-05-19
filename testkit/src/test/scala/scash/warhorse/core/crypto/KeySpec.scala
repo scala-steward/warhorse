@@ -11,7 +11,7 @@ object KeySpec extends DefaultRunnableSpec {
     suite("PrivateKeySpec")(
       testM("priv -> bytes -> priv")(check(gen.privKey)(priv => assert(PrivateKey(priv.bytes))(success(priv)))),
       testM("bytes -> priv -> bytes")(
-        check(gen.sha256)(priv => assert(priv.decode[PrivateKey].map(_.bytes))(success(priv)))
+        check(gen.sha256Bytes)(priv => assert(priv.decode[PrivateKey].map(_.bytes))(success(priv)))
       ),
       test("fail zero")(assert(PrivateKey(PrivateKey.zero))(failure)),
       test("fail max")(assert(PrivateKey(PrivateKey.max))(failure)),

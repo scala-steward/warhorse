@@ -17,14 +17,14 @@ import zio.test._
 object ECDSASpec extends DefaultRunnableSpec {
   val spec = suite("ECDSASpec")(
     testM("sign") {
-      checkM(gen.keyPair, gen.sha256) {
+      checkM(gen.keyPair, gen.sha256Bytes) {
         case ((priv, pub), msg) =>
           val sig = crypto.sign[ECDSA](msg, priv).require
           assertM(secp256k1.verifyECDSA(msg.toArray, sig.bytes.toArray, pub.toArray))(isTrue)
       }
     },
     testM("verify") {
-      checkM(gen.keyPair, gen.sha256) {
+      checkM(gen.keyPair, gen.sha256Bytes) {
         case ((priv, pub), msg) =>
           val ver =
             secp256k1
@@ -34,7 +34,7 @@ object ECDSASpec extends DefaultRunnableSpec {
       }
     },
     testM("sign&verify") {
-      check(gen.keyPair, gen.sha256) {
+      check(gen.keyPair, gen.sha256Bytes) {
         case ((priv, pub), msg) =>
           val ans = for {
             sig <- crypto.sign[ECDSA](msg, priv)
@@ -48,7 +48,7 @@ object ECDSASpec extends DefaultRunnableSpec {
       parseJsonfromFile[List[TestVectorECDSA]]("ecdsa.json")
         .flatMap(r =>
           ZIO.foreach(r.require)(data =>
-            check(gen.sha256(data.msgStr)) { msg =>
+            check(gen.sha256Bytes(data.msgStr)) { msg =>
               val ans = for {
                 sec <- PrivateKey(data.privHex)
                 pub <- sec.genPublicKey

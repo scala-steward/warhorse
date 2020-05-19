@@ -6,7 +6,7 @@ import org.bouncycastle.math.ec.ECPoint
 import scash.warhorse.{ Err, Result }
 import scash.warhorse.Result.{ Failure, Successful }
 import scash.warhorse.core._
-import scash.warhorse.core.crypto.hash.Sha256
+import scash.warhorse.core.crypto.hash.{ Hasher, Sha256 }
 import scodec.bits.ByteVector
 
 import scala.util.Try
@@ -49,7 +49,7 @@ object Schnorr {
         val P        = G.multiply(d)
         val pubBytes = P.getEncoded(true).toByteVector
         val rx       = R.getXCoord.getEncoded.toByteVector
-        val e        = Sha256.hash(rx ++ pubBytes ++ msg).toBigInteger.mod(N)
+        val e        = Hasher[Sha256].hash(rx ++ pubBytes ++ msg).toBigInteger.mod(N)
 
         /** s = (k + e * d) mod n */
         val s = e.multiply(d).add(k).mod(N).toUnsignedByteVector
@@ -80,7 +80,7 @@ object Schnorr {
               else {
 
                 /** e = SHA256(r || compressed(P) || m) mod n */
-                val e  = Sha256
+                val e  = Hasher[Sha256]
                   .hash(r ++ P.getEncoded(true).toByteVector ++ msg)
                   .toBigInteger
                   .mod(ecc.N)
