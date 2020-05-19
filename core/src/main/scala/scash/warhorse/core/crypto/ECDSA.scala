@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 
 import org.bouncycastle.asn1.{ ASN1InputStream, ASN1Integer, DERSequenceGenerator, DLSequence }
-import org.bouncycastle.crypto.params.{ ECPrivateKeyParameters, ECPublicKeyParameters }
+import org.bouncycastle.crypto.params.{ ECDomainParameters, ECPrivateKeyParameters, ECPublicKeyParameters }
 import org.bouncycastle.crypto.signers.{ ECDSASigner => BCSigner }
 import scash.warhorse.{ Err, Result }
 import scash.warhorse.Result.{ Failure, Successful }
@@ -14,16 +14,18 @@ import scash.warhorse.core._
 sealed trait ECDSA
 
 object ECDSA {
-  class ECDSASigner(e: ECCurve[Secp256k1]) extends Signer[ECDSA] {
+  class ECDSASigner(ecc: ECCurve[Secp256k1]) extends Signer[ECDSA] {
+    private val domain = new ECDomainParameters(ecc.curve, ecc.G, ecc.N)
+
     private def lowS(s: BigInteger): BigInt =
-      if (s.compareTo(e.domain.getN.shiftRight(1)) <= 0) s
-      else e.domain.getN.subtract(s)
+      if (s.compareTo(ecc.N.shiftRight(1)) <= 0) s
+      else ecc.N.subtract(s)
 
     def sign(msg: ByteVector, privkey: PrivateKey): Result[Signature] =
       if (msg.size != 32) Failure(Err.BoundsError("ECDSA Sign", "msg must be exactly 32 bytes", s"msg ${msg.size}"))
       else {
         val signer      = new BCSigner(nonceRFC6979)
-        val pkeyParams  = new ECPrivateKeyParameters(privkey.toBigInteger, e.domain)
+        val pkeyParams  = new ECPrivateKeyParameters(privkey.toBigInteger, domain)
         signer.init(true, pkeyParams)
         val Array(r, s) = signer.generateSignature(msg.toArray)
         (lowS _ andThen (derEncoding(r, _)) andThen (Signature(_)) andThen (Successful(_)))(s)
@@ -39,8 +41,8 @@ object ECDSA {
           )
         )
       else {
-        val pkeypoint  = e.domain.getCurve.decodePoint(pubkey.toArray)
-        val pkeyparams = new ECPublicKeyParameters(pkeypoint, e.domain)
+        val pkeypoint  = ecc.curve.decodePoint(pubkey.toArray)
+        val pkeyparams = new ECPublicKeyParameters(pkeypoint, domain)
         val signer     = new BCSigner
         signer.init(false, pkeyparams)
 

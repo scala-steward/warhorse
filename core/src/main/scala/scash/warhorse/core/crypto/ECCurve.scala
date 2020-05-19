@@ -1,7 +1,11 @@
 package scash.warhorse.core.crypto
 
-import org.bouncycastle.crypto.params.ECDomainParameters
+import java.math.BigInteger
+
+import org.bouncycastle.math.ec.{ ECCurve => ECC, ECPoint }
 
 trait ECCurve[A] {
-  val domain: ECDomainParameters
+  val N: BigInteger
+  val G: ECPoint
+  val curve: ECC
 }
