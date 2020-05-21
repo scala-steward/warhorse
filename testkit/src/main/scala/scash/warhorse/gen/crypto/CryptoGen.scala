@@ -8,11 +8,13 @@ import zio.random.Random
 
 trait CryptoGen {
 
-  def sha256Bytes: Gen[Random with Sized, ByteVector] =
+  def sha256: Gen[Random with Sized, Sha256] =
     for {
       msg  <- gen.randomMessage
-      hash <- sha256Bytes(msg)
+      hash <- sha256(msg)
     } yield hash
+
+  def sha256Bytes: Gen[Random with Sized, ByteVector] = sha256.map(_.bytes)
 
   def sha256Bytes(str: String): Gen[Any, ByteVector] = sha256(str).map(_.bytes)
 

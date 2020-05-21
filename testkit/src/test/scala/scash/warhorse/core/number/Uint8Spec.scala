@@ -2,7 +2,6 @@ package scash.warhorse.core.number
 
 import scash.warhorse.core._
 import scash.warhorse.core.CNumericUtil._
-import scash.warhorse.core.SerdeUtil._
 import scash.warhorse.util._
 import scash.warhorse.gen
 
@@ -28,10 +27,6 @@ object Uint8Spec extends DefaultRunnableSpec {
       test("test bounds")(testBounds[Uint8](BigInt(0), BigInt(0xff)))
     ),
     suite("Serde")(
-      testM("symmetry")(check(gen.uint8)(symmetry)),
-      testM("symmetryHex")(check(gen.uint8)(symmetryHex)),
-      test("sym min")(symmetry(Uint8.min)),
-      test("sym max")(symmetry(Uint8.max)),
       test("0")(assert(ByteVector(0.toByte).decode[Uint8])(success(Uint8.min))),
       test("1")(assert(ByteVector(1.toByte).decode[Uint8])(success(Uint8.one))),
       test("0xFF")(assert(ByteVector(0xff.toByte).decode[Uint8])(success(Uint8.max))),

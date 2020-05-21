@@ -2,7 +2,6 @@ package scash.warhorse.core.number
 
 import scash.warhorse.core._
 import scash.warhorse.core.CNumericUtil._
-import scash.warhorse.core.SerdeUtil._
 import scash.warhorse.util._
 import scash.warhorse.gen
 
@@ -26,10 +25,6 @@ object Uint64Spec extends DefaultRunnableSpec {
       test("test bounds")(testBounds[Uint64](BigInt(0), BigInt("18446744073709551615")))
     ),
     suite("Serde")(
-      testM("symmetry")(check(gen.uint64)(symmetry)),
-      testM("symmetryHex")(check(gen.uint64)(symmetryHex)),
-      test("sym min")(symmetry(Uint64.min)),
-      test("sym max")(symmetry(Uint64.max)),
       test("0")(assert(ByteVector.fill(8)(0).decode[Uint64])(success(Uint64.min))),
       test("1")(assert((1.toByte +: ByteVector.fill(7)(0)).decode[Uint64])(success(Uint64.one))),
       test("Uint32.max + 1")(

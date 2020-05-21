@@ -1,11 +1,12 @@
 package scash.warhorse.core.number
 
 import scash.warhorse.core.CNumericUtil._
-import scash.warhorse.core.SerdeUtil._
 import scash.warhorse.util._
 import scash.warhorse.core._
 import scash.warhorse.gen
+
 import scodec.bits.ByteVector
+
 import zio.test.Assertion.equalTo
 import zio.test._
 
@@ -26,10 +27,6 @@ object Int64Spec extends DefaultRunnableSpec {
       test("test bounds")(testBounds[Int64](BigInt(-9223372036854775808L), BigInt(9223372036854775807L)))
     ),
     suite("Serde")(
-      testM("symmetry")(check(gen.int64)(symmetry)),
-      testM("symmetryHex")(check(gen.int64)(symmetryHex)),
-      test("sym min")(symmetry(Int64.min)),
-      test("sym max")(symmetry(Int64.max)),
       test("0")(assert(ByteVector.low(8).decode[Int64])(success(Int64.zero))),
       test("1")(assert((1.toByte +: ByteVector.low(7)).decode[Int64])(success(Int64.one))),
       test("-1")(assert(ByteVector.fill(8)(0xff).decode[Int64])(success(-Int64.one))),

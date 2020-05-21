@@ -2,9 +2,9 @@ package scash.warhorse.core.number
 
 import scash.warhorse.gen
 import scash.warhorse.core.CNumericUtil._
-import scash.warhorse.core.SerdeUtil._
 import scash.warhorse.util._
 import scash.warhorse.core._
+
 import scodec.bits.ByteVector
 
 import zio.test.Assertion._
@@ -26,10 +26,6 @@ object Uint32Spec extends DefaultRunnableSpec {
       test("test bounds")(testBounds[Uint32](BigInt(0), BigInt(4294967295L)))
     ),
     suite("Serde")(
-      testM("symmetry")(check(gen.uint32)(symmetry)),
-      testM("symmetryHex")(check(gen.uint32)(symmetryHex)),
-      test("sym min")(symmetry(Uint32.min)),
-      test("sym max")(symmetry(Uint32.max)),
       test("0")(assert(ByteVector(0, 0, 0, 0).decode[Uint32])(success(Uint32.min))),
       test("1")(assert(ByteVector(1, 0, 0, 0).decode[Uint32])(success(Uint32.one))),
       test("16777216")(assert(ByteVector(0, 0, 0, 1).decode[Uint32])(success(Uint32(16777216)))),

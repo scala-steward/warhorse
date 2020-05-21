@@ -2,7 +2,7 @@ package scash.warhorse.core.typeclass
 
 import scala.util.Try
 
-trait CNumeric[A]    {
+trait CNumeric[A] {
   def andMask: BigInt
   def num: A => BigInt
   def lift: BigInt => A
@@ -18,6 +18,7 @@ trait CNumeric[A]    {
   def lt[A1: CNumeric](a: A, a1: A1): Boolean  = num(a) < CNumeric[A1].num(a1)
   def lte[A1: CNumeric](a: A, a1: A1): Boolean = num(a) <= CNumeric[A1].num(a1)
   def eq[A1: CNumeric](a: A, a1: A1): Boolean  = num(a) == CNumeric[A1].num(a1)
+  def neq[A1: CNumeric](a: A, a1: A1): Boolean = num(a) != CNumeric[A1].num(a1)
 
   def or[A1: CNumeric](a: A, a1: A1): A  = lift(num(a) | CNumeric[A1].num(a1))
   def and[A1: CNumeric](a: A, a1: A1): A = lift(num(a) & CNumeric[A1].num(a1))
@@ -30,36 +31,8 @@ trait CNumeric[A]    {
   def shiftR(a: A, a1: Int): A = lift(num(a) >> a1)
 }
 
-object CNumeric      {
-  /*
-  def consistencyLaw[A: CNumeric](a: A): Boolean =
-    CNumeric[A].lift(CNumeric[A].num(a)) === a
+object CNumeric   {
 
-  def rangeLaw[A: CNumeric](a: A): Boolean =
-    CNumeric[A].min <= CNumeric[A].max &&
-      a >= CNumeric[A].min && a <= CNumeric[A].max
-
-  def reflexiveLaw[A: CNumeric](a: A): Boolean =
-    (CNumeric[A].num(a) == CNumeric[A].num(a)) && (a === a)
-
-  def symmetryLaw[A: CNumeric, A1: CNumeric](a1: A, a2: A1) =
-    underylingIdentityLaw(a1, a2) && underylingIdentityLaw(a2, a1)
-
-  def additiveIdentityLaw[A: CNumeric](a: A): Boolean =
-    a + CNumeric[A].lift(BigInt(0)) === a
-
-  def subtractiveIdentityLaw[A: CNumeric](a: A): Boolean =
-    a - CNumeric[A].lift(BigInt(0)) === a
-
-  def multiplicativeIdentityLaw[A: CNumeric](a: A): Boolean =
-    a * CNumeric[A].lift(BigInt(1)) === a
-
-  def underylingIdentityLaw[A: CNumeric, A1: CNumeric](a1: A, a2: A1): Boolean =
-    !(a1 === a2) || (CNumeric[A].num(a1) == CNumeric[A1].num(a2))
-
-  def transitivityLaw[A1: CNumeric, A2: CNumeric, A3: CNumeric](a1: A1, a2: A2, a3: A3): Boolean =
-    !(a1 === a2 && a2 === a3) || (a1 === a3)
-   */
   def apply[A](implicit n: CNumeric[A]): CNumeric[A] = n
 
   def apply[A](mask: BigInt, minimum: A, maximum: A)(n: A => BigInt, app: BigInt => A): CNumeric[A] =
@@ -89,7 +62,7 @@ trait CNumericSyntax {
     def <[A1: CNumeric](num: A1): Boolean   = CNumeric[A].lt(a, num)
     def <=[A1: CNumeric](num: A1): Boolean  = CNumeric[A].lte(a, num)
     def ===[A1: CNumeric](num: A1): Boolean = CNumeric[A].eq(a, num)
-    def !==[A1: CNumeric](num: A1): Boolean = CNumeric[A].eq(a, num)
+    def !==[A1: CNumeric](num: A1): Boolean = CNumeric[A].neq(a, num)
     def <<(num: Int): A                     = CNumeric[A].shiftL(a, num)
     def >>(num: Int): A                     = CNumeric[A].shiftR(a, num)
 
