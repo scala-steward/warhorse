@@ -34,7 +34,7 @@ package object responses extends Blockchain with RpcTransactionDecoders {
   implicit val doubleSha256BDecoder: Codec[DoubleSha256B] =
     Codec.from(
       doubleSha256Codec.map(DoubleSha256.toBigEndian),
-      doubleSha256Codec.contramap[DoubleSha256B](DoubleSha256.toLittleEndian)
+      doubleSha256Codec.contramap[DoubleSha256B](DoubleSha256B.toLittleEndian)
     )
 
   implicit val bigDecimalDecoder: Decoder[BigDecimal] = Decoder.decodeBigDecimal
