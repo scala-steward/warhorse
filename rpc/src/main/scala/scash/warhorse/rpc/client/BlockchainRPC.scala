@@ -1,7 +1,6 @@
 package scash.warhorse.rpc.client
 
 import scash.warhorse.Result
-import scash.warhorse.core.crypto.hash.DoubleSha256._
 import scash.warhorse.rpc.responses._
 import zio.RIO
 import io.circe.syntax._

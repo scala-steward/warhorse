@@ -49,7 +49,6 @@ trait SerdeSyntax {
   implicit class SerdeSyntaxOps[A: Serde](a: A) {
     def bytes: ByteVector        = Serde[A].encode(a).require
     def hex: String              = bytes.toHex
-    def toBigInt: BigInt         = bytes.toBigInt
     def toArray: Array[Byte]     = bytes.toArray
     def toBigInteger: BigInteger = bytes.toBigInteger
   }

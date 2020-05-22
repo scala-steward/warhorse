@@ -2,7 +2,6 @@ package scash.warhorse.core.crypto
 
 import java.security.SecureRandom
 
-import org.bouncycastle.crypto.params.ECDomainParameters
 import org.bouncycastle.jce.ECNamedCurveTable
 
 import scash.warhorse.Result
@@ -15,7 +14,9 @@ object Secp256k1 {
   val secp256K1Curve: ECCurve[Secp256k1] = {
     val spec = ECNamedCurveTable.getParameterSpec("secp256k1")
     new ECCurve[Secp256k1] {
-      val domain = new ECDomainParameters(spec.getCurve, spec.getG, spec.getN)
+      val G     = spec.getG
+      val N     = spec.getN
+      val curve = spec.getCurve
     }
   }
 
@@ -30,7 +31,7 @@ object Secp256k1 {
       genPublicKey(privateKey, true)
 
     private def genPublicKey(privateKey: PrivateKey, compressed: Boolean): Result[PublicKey] = {
-      val pointQ = secp256K1Curve.domain.getG.multiply(privateKey.toBigInteger)
+      val pointQ = secp256K1Curve.G.multiply(privateKey.toBigInteger)
       PublicKey.apply(pointQ.getEncoded(compressed).toByteVector)
     }
 

@@ -1,10 +1,9 @@
 package scash.warhorse.core
 
-import org.bouncycastle.crypto.digests.SHA256Digest
-
 import scash.warhorse.Result
 import scodec.bits.ByteVector
 import scash.warhorse.core.crypto.Secp256k1._
+import scash.warhorse.core.crypto.hash.{ Hasher, Sha256 }
 
 package object crypto {
   def genPrivkey: Result[PrivateKey] = secp256k1KeyGen.genPrivkey
@@ -19,5 +18,5 @@ package object crypto {
   def verify[A: Signer](msg: ByteVector, sig: ByteVector, pubKey: PublicKey): Result[Boolean] =
     Signer[A].verify(msg, sig, pubKey)
 
-  protected[crypto] def nonceRFC6979 = new KGenerator(new SHA256Digest)
+  protected[crypto] def nonceRFC6979 = new KGenerator(Hasher[Sha256].hasher)
 }

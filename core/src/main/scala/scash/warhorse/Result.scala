@@ -103,8 +103,8 @@ object Result {
     opt.fold(successful(ifNone))(failure)
 
   /** Creates an attempt from the supplied either. */
-  def fromEither[A](e: Either[Err, A]): Result[A]                 =
-    e.fold(failure, successful)
+  def fromEither[A](e: Either[String, A]): Result[A]              =
+    e.fold(err => failure(Err(err)), successful)
 
   def fromAttempt[A](a: Attempt[A]): Result[A] =
     a match {

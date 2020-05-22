@@ -19,14 +19,14 @@ object SchnorrSpec extends DefaultRunnableSpec {
 
   val spec = suite("SchnorrSpec")(
     testM("sign") {
-      checkM(gen.keyPair, gen.sha256) {
+      checkM(gen.keyPair, gen.sha256Bytes) {
         case ((priv, pub), msg) =>
           val sig = crypto.sign[Schnorr](msg, priv).require
           assertM(secp256k1.verifySchnorr(msg.toArray, sig.bytes.toArray, pub.toArray))(isTrue)
       }
     },
     testM("verify") {
-      checkM(gen.keyPair, gen.sha256) {
+      checkM(gen.keyPair, gen.sha256Bytes) {
         case ((priv, pub), msg) =>
           val ver =
             secp256k1
@@ -36,7 +36,7 @@ object SchnorrSpec extends DefaultRunnableSpec {
       }
     },
     testM("sign&verify") {
-      check(gen.keyPair, gen.sha256) {
+      check(gen.keyPair, gen.sha256Bytes) {
         case ((priv, pub), msg) =>
           val ans = for {
             sig <- crypto.sign[Schnorr](msg, priv)

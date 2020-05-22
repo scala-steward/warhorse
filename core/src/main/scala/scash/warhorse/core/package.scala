@@ -40,8 +40,6 @@ package object core extends SerdeSyntax with CNumericSyntax {
   }
 
   implicit class BigIntegerOps(n: BigInteger) {
-    def unSignedArrayLength = (n.bitLength() + 7) / 8
-
     def toUnsignedByteVector = {
       val bytes = ByteVector(n.toByteArray)
       if (bytes.length <= 32) bytes.padLeft(32)
