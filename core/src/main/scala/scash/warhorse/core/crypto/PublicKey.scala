@@ -27,7 +27,7 @@ object PublicKey {
     b.size match {
       case 33 if b(0) == 0x02 || b(0) == 0x03 => Successful(PKeyCompressed(b))
       case 65 if b(0) == 0x04                 => Successful(PKeyUnCompressed(b))
-      case _                                  => Failure(Err.BoundsError("publickey", "is not compressed nor uncompressed", b.toHex))
+      case _                                  => Failure(Err.BoundsError("publickey", "is not valid", b.toHex))
     }
 
   implicit val publicKeySerde: Serde[PublicKey] =
@@ -37,10 +37,15 @@ object PublicKey {
         case PKeyUnCompressed(b) => Successful(b)
       },
       b =>
-        if (b.isEmpty) Failure(Err.ParseError("Publickey", s"empty pubkeys not allowed"))
+        if (b.isEmpty) Failure(Err.ParseError("Publickey", s"empty pubkeys are invalid"))
         else if (List(0x02, 0x03).contains(b(0)))
-          Successful(DecodeResult(PKeyCompressed(b.take(33)), b.drop(33).toBitVector))
-        else if (b(0) == 0x04) Successful(DecodeResult(PKeyUnCompressed(b.take(65)), b.drop(65).toBitVector))
-        else Failure(Err.ParseError("Publickey", s"$b is not compressed or uncompressed"))
+          Result
+            .fromEither(b.acquire(33))
+            .map(compressed => DecodeResult(PKeyCompressed(compressed), b.drop(33).toBitVector))
+        else if (b(0) == 0x04)
+          Result
+            .fromEither(b.acquire(65))
+            .map(full => DecodeResult(PKeyUnCompressed(full), b.drop(65).toBitVector))
+        else Failure(Err.ParseError("Publickey", s"is not compressed or uncompressed"))
     )
 }
