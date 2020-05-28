@@ -43,6 +43,9 @@ object Serde      {
     new Serde[A] {
       def codec: Codec[A] = c
     }
+
+  implicit def serdeToCodec[A](implicit s: Serde[A]): Codec[A] = s.codec
+
 }
 
 trait SerdeSyntax {
