@@ -11,7 +11,7 @@ trait TransactionGen {
   def outpoint: Gen[Random with Sized, TransactionOutPoint] =
     for {
       txId <- gen.doubleSha256
-      vout <- gen.uint32(Uint32.one, Uint32(500))
+      vout <- gen.uint32(Uint32.one, Uint32(100))
     } yield TransactionOutPoint(txId, vout)
 
   def input: Gen[Random with Sized, TransactionInput] =
@@ -21,9 +21,9 @@ trait TransactionGen {
       sequence  <- Gen.const(Uint32(429467295))
     } yield TransactionInput(outPoint, scriptSig, sequence)
 
-  def inputs: Gen[Random with Sized, List[TransactionInput]] = Gen.listOfBounded(1, 1000)(input)
+  def inputs: Gen[Random with Sized, List[TransactionInput]] = Gen.listOfBounded(1, 100)(input)
 
-  def outputs: Gen[Random with Sized, List[TransactionOutput]] = Gen.listOfBounded(1, 1000)(output)
+  def outputs: Gen[Random with Sized, List[TransactionOutput]] = Gen.listOfBounded(1, 100)(output)
 
   def output =
     for {

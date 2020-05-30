@@ -25,7 +25,6 @@ object TransactionSpec extends DefaultRunnableSpec {
     suite("symmetry")(
       testM("fromType")(
         check(gen.transaction) { tx =>
-          Predef.println(tx)
           assert(tx.bytes.decode[Transaction])(success(tx))
         }
       ),
