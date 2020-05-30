@@ -7,22 +7,22 @@ import scodec.Codec
 import scodec.bits.BitVector
 import scodec.codecs.{ uint16L, uint32L, uint8L, listOfN => slistOfN, variableSizeBytes => sVarSize, bytes => sbytes }
 
-case class CompactSize(num: Long)
+case class CompactSizeUint(num: Long)
 
-object CompactSize {
+object CompactSizeUint {
 
   def bytes                                       = {
-    val intCodec = compactSizeSerde.xmap(_.num.toInt, (i: Int) => CompactSize(i.toLong))
+    val intCodec = compactSizeSerde.xmap(_.num.toInt, (i: Int) => CompactSizeUint(i.toLong))
     sVarSize(intCodec.codec, sbytes)
   }
   def listOfN[A](serde: Serde[A]): Codec[List[A]] = {
-    val intCodec = compactSizeSerde.xmap(_.num.toInt, (i: Int) => CompactSize(i.toLong))
+    val intCodec = compactSizeSerde.xmap(_.num.toInt, (i: Int) => CompactSizeUint(i.toLong))
     slistOfN(intCodec.codec, serde.codec)
   }
 
-  val compactSizeSerde: Serde[CompactSize] = Serde(
-    Codec[CompactSize](
-      (n: CompactSize) =>
+  val compactSizeSerde: Serde[CompactSizeUint] = Serde(
+    Codec[CompactSizeUint](
+      (n: CompactSizeUint) =>
         n.num match {
           case i if (i < 0xfd)        =>
             uint8L.encode(i.toInt)
@@ -48,13 +48,16 @@ object CompactSize {
           .flatMap(byte =>
             byte.value match {
               case 0xff =>
-                Serde[Uint64].decode(byte.remainder.toByteVector).map(_.map(s => CompactSize(s.num.toLong))).toAttempt
+                Serde[Uint64]
+                  .decode(byte.remainder.toByteVector)
+                  .map(_.map(s => CompactSizeUint(s.num.toLong)))
+                  .toAttempt
               case 0xfe =>
-                uint32L.decode(byte.remainder).map(_.map(CompactSize(_)))
+                uint32L.decode(byte.remainder).map(_.map(CompactSizeUint(_)))
               case 0xfd =>
-                uint16L.decode(byte.remainder).map(_.map(n => CompactSize(n.toLong)))
+                uint16L.decode(byte.remainder).map(_.map(n => CompactSizeUint(n.toLong)))
               case _    =>
-                Successful(scodec.DecodeResult(CompactSize(byte.value.toLong), byte.remainder))
+                Successful(scodec.DecodeResult(CompactSizeUint(byte.value.toLong), byte.remainder))
             }
           )
     )

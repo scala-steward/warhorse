@@ -1,7 +1,7 @@
 package scash.warhorse.core.blockchain
 
 import scash.warhorse.core.crypto.hash.{ DoubleSha256, DoubleSha256B, Hasher }
-import scash.warhorse.core.number.{ CompactSize, Int32, Uint32 }
+import scash.warhorse.core.number.{ CompactSizeUint, Int32, Uint32 }
 import scash.warhorse.core.typeclass.Serde
 
 case class Transaction(
@@ -34,8 +34,8 @@ object Transaction {
   implicit val transactionSerde: Serde[Transaction] = Serde(
     (
       Serde[Int32].codec ::
-        CompactSize.listOfN(Serde[TransactionInput]) ::
-        CompactSize.listOfN(Serde[TransactionOutput]) ::
+        CompactSizeUint.listOfN(Serde[TransactionInput]) ::
+        CompactSizeUint.listOfN(Serde[TransactionOutput]) ::
         Serde[Uint32].codec
     ).as[Transaction]
   )
