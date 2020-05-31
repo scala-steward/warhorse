@@ -1,6 +1,6 @@
 package scash.warhorse.core.blockchain
 
-import scash.warhorse.core.number.{ CompactSizeUint, Uint32 }
+import scash.warhorse.core.number.Uint32
 import scash.warhorse.core.typeclass.Serde
 
 import scodec.bits._

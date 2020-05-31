@@ -1,7 +1,7 @@
 package scash.warhorse.core.blockchain
 
 import scash.warhorse.core.crypto.hash.{ DoubleSha256, DoubleSha256B, Hasher }
-import scash.warhorse.core.number.{ CompactSizeUint, Int32, Uint32 }
+import scash.warhorse.core.number.{ Int32, Uint32 }
 import scash.warhorse.core.typeclass.Serde
 
 case class Transaction(
