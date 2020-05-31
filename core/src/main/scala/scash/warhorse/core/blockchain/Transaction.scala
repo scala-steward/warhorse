@@ -25,12 +25,6 @@ object Transaction {
   lazy val lockTime = Uint32.zero
   lazy val sequence = Uint32(4294967295L)
 
-  def apply(
-    inputs: List[TransactionInput],
-    outputs: List[TransactionOutput]
-  ): Transaction =
-    Transaction(version, inputs, outputs, lockTime)
-
   implicit val transactionSerde: Serde[Transaction] = Serde(
     (
       Serde[Int32].codec ::

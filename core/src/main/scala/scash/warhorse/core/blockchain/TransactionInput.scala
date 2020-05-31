@@ -19,7 +19,4 @@ object TransactionInput {
         Serde[Uint32].codec
     ).as[TransactionInput]
   )
-
-  implicit def apply(prevOutput: TransactionOutPoint, sigScript: ByteVector): TransactionInput =
-    TransactionInput(prevOutput, sigScript, Transaction.sequence)
 }
