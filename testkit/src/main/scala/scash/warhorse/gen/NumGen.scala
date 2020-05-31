@@ -1,5 +1,6 @@
 package scash.warhorse.gen
 
+import scash.warhorse.core.blockchain.CompactSizeUint
 import zio.test.Gen
 
 trait NumGen {
@@ -27,4 +28,5 @@ trait NumGen {
 
   def positiveBigInts = bigInts.filter(_ >= 0)
 
+  def compactSizeUints = uint64.map(CompactSizeUint(_))
 }

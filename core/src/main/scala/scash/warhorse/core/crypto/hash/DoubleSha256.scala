@@ -2,7 +2,6 @@ package scash.warhorse.core.crypto.hash
 
 import org.bouncycastle.crypto.Digest
 
-import scash.warhorse.core.crypto.hash.DoubleSha256.doubleSha256Serde
 import scash.warhorse.core.crypto.hash.Sha256.sha256Serde
 import scash.warhorse.core.typeclass.Serde
 
@@ -14,8 +13,8 @@ case class DoubleSha256B(private[crypto] val b: ByteVector)
 object DoubleSha256B {
   def toLittleEndian(dsha256: DoubleSha256B): DoubleSha256 = DoubleSha256(dsha256.b.reverse)
 
-  implicit val doubleSha256SerdeB: Serde[DoubleSha256B] =
-    doubleSha256Serde.xmap(b => DoubleSha256B(b.b.reverse), a => DoubleSha256(a.b.reverse))
+  implicit val doubleSha256Serde: Serde[DoubleSha256B] =
+    DoubleSha256.doubleSha256Serde.xmap(d => DoubleSha256B(d.b), d => DoubleSha256(d.b))
 }
 
 object DoubleSha256  {
