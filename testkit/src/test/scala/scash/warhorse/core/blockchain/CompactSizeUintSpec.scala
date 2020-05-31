@@ -12,8 +12,12 @@ import scodec.bits._
 object CompactSizeUintSpec extends DefaultRunnableSpec {
 
   val spec = suite("CompactSizeUintSpec")(
-    testM("from Uint8")(check(gen.uint8)(c => assert(CompactSizeUint(c).bytes.decode[CompactSizeUint])(success(c)))),
-    testM("from Uint32")(check(gen.uint32)(c => assert(CompactSizeUint(c).bytes.decode[CompactSizeUint])(success(c)))),
+    testM("from Uint8")(
+      check(gen.uint8)(c => assert(CompactSizeUint(c).bytes.decode[CompactSizeUint])(success(CompactSizeUint(c))))
+    ),
+    testM("from Uint32")(
+      check(gen.uint32)(c => assert(CompactSizeUint(c).bytes.decode[CompactSizeUint])(success(CompactSizeUint(c))))
+    ),
     testM("from Type")(check(gen.compactSizeUints)(c => assert(c.bytes.decode[CompactSizeUint])(success(c)))),
     test("bytes")(
       assert(hex"8b".decode[CompactSizeUint].map(_.bytes))(success(hex"8b")) &&
