@@ -28,7 +28,9 @@ object CompactSizeUintSpec extends DefaultRunnableSpec {
         assert(hex"feffffffff".decode[CompactSizeUint].map(_.bytes))(success(hex"feffffffff")) &&
         assert(hex"ffffff008bff0001a1".decode[CompactSizeUint].map(_.bytes))(success(hex"ffffff008bff0001a1")) &&
         assert(hex"ffffffffffffffffff".decode[CompactSizeUint].map(_.bytes))(success(hex"ffffffffffffffffff"))
-    )
+    ),
+    test("empty")(assert(ByteVector.empty.decode[CompactSizeUint])(failure)),
+    test("too large")(assert(ByteVector.high(11).decodeExact[CompactSizeUint])(failure))
   )
 
 }
