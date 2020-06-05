@@ -28,7 +28,7 @@ case class RpcCoinbaseInput(
 case class RpcTInput(
   txid: DoubleSha256B,
   vout: Int,
-  scriptSig: RpcScriptSig,
+  scriptSig: RpcScriptSig, //TODO: Change it when implementing scriptsig
   sequence: Uint32
 ) extends RpcTransactionInput
 

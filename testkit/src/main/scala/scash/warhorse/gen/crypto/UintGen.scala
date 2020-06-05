@@ -12,6 +12,8 @@ trait UintGen {
   /** Generates a random uint32 */
   def uint32 = Gen.long(Uint32.min.num, Uint32.max.num).map(Uint32(_))
 
+  def uint32(min: Uint32, max: Uint32) = Gen.long(min.num, max.num).map(Uint32(_))
+
   /** Generates a random uint64 */
   def uint64 = positiveBigInts.filter(_ < (BigInt(1) << 64)).map(Uint64(_))
 

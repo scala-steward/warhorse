@@ -15,7 +15,7 @@ import scodec.Attempt.{ Successful => SSuccessful, Failure => SFailure }
  * `fromOption`.
  * This encoding is used in `Attempt[A]` by scodec.
  * **/
-sealed trait Result[+A] extends Product with Serializable {
+sealed trait Result[+A] extends Product with Serializable { self =>
 
   /** Maps the supplied function over the successful value, if present. */
   def map[B](f: A => B): Result[B]
@@ -69,6 +69,9 @@ sealed trait Result[+A] extends Product with Serializable {
 
   /** Converts to a try. */
   def toTry: Try[A]
+
+  /** Converts into scodec.Attempt */
+  def toAttempt: Attempt[A] = Result.toAttempt(self)
 }
 
 object Result {
