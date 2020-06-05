@@ -1,12 +1,24 @@
 package scash.warhorse.gen.crypto
 
-import scash.warhorse.core.crypto.hash.{ DoubleSha256, Hasher, Sha256 }
+import scash.warhorse.core.crypto.hash.{ DoubleSha256, Hash160, Hasher, Sha256 }
 import scash.warhorse.gen
 import scodec.bits.ByteVector
 import zio.test.{ Gen, Sized }
 import zio.random.Random
 
 trait CryptoGen {
+
+  def hash160: Gen[Random with Sized, Hash160] =
+    for {
+      msg  <- gen.randomMessage
+      hash <- hash160(msg)
+    } yield hash
+
+  def hash160Bytes(str: String): Gen[Any, ByteVector] = hash160(str).map(_.bytes)
+
+  def hash160(str: String): Gen[Any, Hash160] = hash160(ByteVector.view(str.getBytes))
+
+  def hash160(bytes: ByteVector): Gen[Any, Hash160] = Gen.const(Hasher[Hash160].hash(bytes))
 
   def sha256: Gen[Random with Sized, Sha256] =
     for {
