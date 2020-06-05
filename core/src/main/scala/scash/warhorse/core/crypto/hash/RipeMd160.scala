@@ -17,7 +17,7 @@ object RipeMd160 {
   implicit val ripeMd160Serde: Serde[RipeMd160] = Serde[RipeMd160](
     (a: RipeMd160) => Successful(a.b),
     (bytes: ByteVector) =>
-      if (bytes.size >= bsize) Successful(DecodeResult(RipeMd160(bytes.take(bsize)), bytes.drop(bsize).bits))
+      if (bytes.size == bsize) Successful(DecodeResult(RipeMd160(bytes.take(bsize)), bytes.drop(bsize).bits))
       else Failure(Err.BoundsError("RipeMD160", s"needs $bsize bytes", s"${bytes.size} bytes"))
   )
 
