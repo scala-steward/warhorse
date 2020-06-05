@@ -24,12 +24,6 @@ object LegacyAddress {
   def p2sh(net: Net, hash: Hash160): P2SH =
     P2SH(cons(net, P2SHMainNet, P2SHTestNet, hash))
 
-  def fromString(str: String): Result[Address] =
-    for {
-      bytes <- Result.fromOption(ByteVector.fromBase58(str), Err(s"is not valid base58"))
-      addr  <- fromByteVector(bytes)
-    } yield addr
-
   def fromByteVector(bytes: ByteVector): Result[Address] =
     Result.fromOption(
       bytes.headOption.flatMap {

@@ -22,9 +22,6 @@ object Address {
         .fromOption(ByteVector.fromBase58(addr), Err(s"Invalid base58 format for : $addr"))
         .flatMap(addressSerde.decodeValue(_))
 
-  def fromValidBase58(addr: String): Address =
-    apply(addr).require
-
   implicit val addressSerde: Serde[Address] =
     Serde(
       (a: Address) => Successful(ByteVector.fromValidBase58(a.value)),
