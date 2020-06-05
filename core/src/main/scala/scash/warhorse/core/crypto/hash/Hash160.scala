@@ -15,7 +15,7 @@ object Hash160 {
   implicit val hash160Serde: Serde[Hash160] = Serde(
     (a: Hash160) => Successful(a.b),
     (bytes: ByteVector) =>
-      if (bytes.size >= bsize) Successful(DecodeResult(Hash160(bytes.take(bsize)), bytes.drop(bsize).bits))
+      if (bytes.size == bsize) Successful(DecodeResult(Hash160(bytes.take(bsize)), bytes.drop(bsize).bits))
       else Failure(Err.BoundsError("Hash160", s"needs $bsize bytes", s"${bytes.size} bytes"))
   )
 
