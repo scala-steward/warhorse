@@ -9,6 +9,9 @@ import zio.test._
 
 object AddressSpec extends DefaultRunnableSpec {
   val spec = suite("AddressSpec")(
-    testM("symmetry")(check(gen.legacyAddress)(addr => assert(addr.bytes.decode[Address])(success(addr))))
+    suite("symmetry")(
+      testM("p2pkh")(check(gen.p2pkh)(addr => assert(addr.bytes.decode[Address])(success(addr)))),
+      testM("ps2h")(check(gen.p2sh)(addr => assert(addr.bytes.decode[Address])(success(addr))))
+    )
   )
 }

@@ -17,6 +17,6 @@ object Address {
     Serde(
       (a: Address) => Successful(ByteVector.fromValidBase58(a.value)),
       (bytes: ByteVector) =>
-        LegacyAddress.fromByteVector(bytes.take(25)).map(addr => DecodeResult(addr, bytes.drop(25).toBitVector))
+        LegacyAddress.fromByteVector(bytes.take(25)).map(DecodeResult(_, bytes.drop(25).toBitVector))
     )
 }

@@ -21,11 +21,13 @@ object LegacyAddress {
     }
 
   //TODO: ScriptPubkey
-  def p2sh(net: Net, scriptPubKey: ByteVector): P2SH =
+  def p2sh(net: Net, redeemScript: ByteVector): P2SH = {
+    val hash = Hasher[Hash160].hash(redeemScript)
     net match {
-      case MainNet           => P2SH(genBase58(P2SHMainNet, scriptPubKey))
-      case TestNet | RegTest => P2SH(genBase58(P2SHTestNet, scriptPubKey))
+      case MainNet           => P2SH(genBase58(P2SHMainNet, hash.bytes))
+      case TestNet | RegTest => P2SH(genBase58(P2SHTestNet, hash.bytes))
     }
+  }
 
   private def genBase58(prefix: Byte, data: ByteVector): String = {
     val bytes    = prefix +: data
