@@ -4,7 +4,6 @@ import scash.warhorse.gen
 import scash.warhorse.core.CNumericUtil._
 import scash.warhorse.util._
 import scash.warhorse.core._
-
 import scodec.bits.ByteVector
 
 import zio.test.Assertion._
@@ -33,6 +32,12 @@ object Uint32Spec extends DefaultRunnableSpec {
       test("0xFF")(assert(ByteVector(0xff, 0, 0, 0).decode[Uint32])(success(Uint32(255)))),
       test("max to hex")(assert(Uint32.max.hex)(equalTo("ffffffff"))),
       test("min to hex")(assert(Uint32.min.hex)(equalTo("00000000"))),
+      test("0x0000ffff")(assert(ByteVector.fromValidHex("0x0000ffff").decode_[Uint32])(equalTo(Uint32(4294901760L)))),
+      testM("hasBit")(
+        check(gen.uint32(Uint32.zero, Uint32.max - Uint32(2147483648L)))(n =>
+          assert((Uint32(2147483648L) + n) hasBit (1L << 31))(isTrue)
+        )
+      ),
       test("0xffffffff == Uint32.max")(
         assert(ByteVector(0xff, 0xff, 0xff, 0xff).decode[Uint32])(success(Uint32.max))
       ),

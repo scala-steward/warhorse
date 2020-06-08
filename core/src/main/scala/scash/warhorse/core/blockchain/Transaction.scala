@@ -23,7 +23,13 @@ case class Transaction(
 object Transaction {
   lazy val version  = Int32.one
   lazy val lockTime = Uint32.zero
-  lazy val sequence = Uint32(4294967295L)
+
+  /**
+    https://github.com/bitcoin/bips/blob/master/bip-0068.mediawiki
+      Setting nSequence to this value for every input in a transaction
+      disables nLockTime
+   */
+  lazy val nSequence = Uint32.max
 
   implicit val transactionSerde: Serde[Transaction] = Serde(
     (

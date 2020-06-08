@@ -33,7 +33,8 @@ object SerdeSpec extends DefaultRunnableSpec {
     suite("crypto")(
       testM("privkey")(laws.run(gen.privKey)),
       testM("pubkey")(laws.run(gen.pubkey)),
-      testM("sha256")(laws.run(gen.sha256))
+      testM("sha256")(laws.run(gen.sha256)),
+      testM("hash160")(laws.run(gen.hash160))
     )
   )
 }
