@@ -71,10 +71,10 @@ trait CNumericSyntax {
     def <<(num: Int): A                     = CNumeric[A].shiftL(a, num)
     def >>(num: Int): A                     = CNumeric[A].shiftR(a, num)
 
-    def |(num: A): A = CNumeric[A].or(a, num)
-    def &(num: A): A = CNumeric[A].and(a, num)
-    def ^(num: A): A = CNumeric[A].xor(a, num)
-    def unary_- : A  = CNumeric[A].negative(a)
+    def |[A1: CNumeric](num: A1): A = CNumeric[A].or(a, num)
+    def &[A1: CNumeric](num: A1): A = CNumeric[A].and(a, num)
+    def ^[A1: CNumeric](num: A1): A = CNumeric[A].xor(a, num)
+    def unary_- : A                 = CNumeric[A].negative(a)
 
     def hasBit[A1: CNumeric](num: A1): Boolean = CNumeric[A].hasBit(a, num)
   }
