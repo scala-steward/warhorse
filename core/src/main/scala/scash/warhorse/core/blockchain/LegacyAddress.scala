@@ -2,8 +2,8 @@ package scash.warhorse.core.blockchain
 
 import scash.warhorse.{ Err, Result }
 import scash.warhorse.core.blockchain.Address._
+import scash.warhorse.core.crypto.PublicKey
 import scash.warhorse.core.crypto.hash.{ DoubleSha256, Hash160, Hasher }
-
 import scodec.bits.ByteVector
 
 object LegacyAddress {
@@ -13,6 +13,9 @@ object LegacyAddress {
 
   val P2SHMainNet = 0x05.toByte
   val P2SHTestNet = 0xc4.toByte
+
+  def p2pkh(net: Net, publicKey: PublicKey): P2PKH =
+    p2pkh(net, Hasher[Hash160].hash(publicKey.bytes))
 
   def p2pkh(net: Net, hash: Hash160): P2PKH          =
     P2PKH(cons(net, P2PKHMainNet, P2PKHTestNet, hash))

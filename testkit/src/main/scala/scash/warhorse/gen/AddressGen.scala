@@ -8,9 +8,9 @@ trait AddressGen {
 
   def p2pkh: Gen[Random with Sized, Address] =
     for {
-      net  <- netGenerator
-      hash <- hash160
-    } yield LegacyAddress.p2pkh(net, hash)
+      pubKey <- pubkey
+      net    <- netGenerator
+    } yield LegacyAddress.p2pkh(net, pubKey)
 
   def p2sh: Gen[Random, Address] =
     for {
