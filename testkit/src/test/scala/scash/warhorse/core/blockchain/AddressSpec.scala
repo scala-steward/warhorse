@@ -2,6 +2,7 @@ package scash.warhorse.core.blockchain
 
 import io.circe.Decoder
 import scash.warhorse._
+
 import scash.warhorse.core._
 import scash.warhorse.core.crypto.hash.Hash160
 import scash.warhorse.util._
@@ -39,10 +40,10 @@ object AddressSpec extends DefaultRunnableSpec {
             ZIO.foreach(r.require) { test =>
               val ans      = Address(test.addr)
               val expected = ans.map {
-                case Address.P2PKH(_) =>
-                  LegacyAddress.p2pkh(test.chain, test.hash.drop(3).dropRight(2).decodeExact_[Hash160])
-                case Address.P2SH(_)  =>
-                  LegacyAddress.p2sh(test.chain, test.hash.drop(2).dropRight(1).decodeExact_[Hash160])
+                case P2PKH(_) =>
+                  Addr[LegacyAddr].p2pkh(test.chain, test.hash.drop(3).dropRight(2).decodeExact_[Hash160])
+                case P2SH(_)  =>
+                  Addr[LegacyAddr].p2sh(test.chain, test.hash.drop(2).dropRight(1).decodeExact_[Hash160])
               }
               ZIO.succeed(
                 assert(ans.map(_.value))(success(test.addr)) &&
