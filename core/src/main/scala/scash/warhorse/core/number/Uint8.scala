@@ -10,6 +10,8 @@ protected[warhorse] case class Uint8(num: Int) extends AnyVal
 
 object Uint8 {
 
+  def apply(b: Byte): Uint8 = new Uint8(verify(b)(min, max).toInt)
+
   def apply(i: Int): Uint8 = new Uint8(verify(i)(min, max))
 
   def apply(n: BigInt): Uint8 = new Uint8(verify(n)(min, max).toInt)

@@ -14,13 +14,16 @@ case class P2PKH(value: String) extends Address
 case class P2SH(value: String)  extends Address
 
 object Address {
+  def asP2PKH(addr: Address): Option[P2PKH] =
+    addr match {
+      case p: P2PKH => Some(p)
+      case _: P2SH  => None
+    }
+
   def apply(addr: String): Result[Address] =
     if (addr.length < 26 || addr.length > 35)
       Failure(Err.BoundsError("Address", "26 <= addr.length <= 35 s", addr.length.toString))
-    else
-      Result
-        .fromOption(ByteVector.fromBase58(addr), Err(s"Invalid base58 format for : $addr"))
-        .flatMap(addressSerde.decodeValue(_))
+    else LegacyAddr.fromString(addr)
 
   implicit val addressSerde: Serde[Address] =
     Serde(

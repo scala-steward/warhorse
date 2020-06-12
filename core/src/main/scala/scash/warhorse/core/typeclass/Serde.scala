@@ -21,8 +21,9 @@ trait Serde[A]    {
   def decode(byteVector: ByteVector): Result[DecodeResult[A]] =
     Result.fromAttempt(codec.decode(byteVector.bits))
 
-  def encode(a: A): Result[ByteVector] =
-    Result.fromAttempt(codec.encode(a).map(_.toByteVector))
+  def encodeBits(a: A): Result[BitVector] = Result.fromAttempt(codec.encode(a))
+
+  def encode(a: A): Result[ByteVector] = encodeBits(a).map(_.toByteVector)
 }
 
 object Serde      {
@@ -48,12 +49,15 @@ object Serde      {
 trait SerdeSyntax {
   implicit class SerdeSyntaxOps[A: Serde](a: A) {
     def bytes: ByteVector        = Serde[A].encode(a).require
-    def bits: BitVector          = bytes.toBitVector
+    def bits: BitVector          = Serde[A].encodeBits(a).require
     def hex: String              = bytes.toHex
     def toArray: Array[Byte]     = bytes.toArray
     def toBigInteger: BigInteger = bytes.toBigInteger
   }
 
+  implicit class BitVectorOps(bitVector: BitVector)    {
+    def decode_[A: Serde]: A = Serde[A].codec.decodeValue(bitVector).require
+  }
   implicit class ByteVectorOps(byteVector: ByteVector) {
 
     /** Returns the successful value if present; otherwise throws an `IllegalArgumentException`. */

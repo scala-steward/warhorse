@@ -14,6 +14,17 @@ object LegacyAddr {
   val P2SHMainNet = 0x05.toByte
   val P2SHTestNet = 0xc4.toByte
 
+  def net(addr: Address): Net =
+    ByteVector.fromValidBase58(addr.value)(0) match {
+      case P2PKHMainNet | P2SHMainNet => MainNet
+      case P2PKHTestNet | P2SHTestNet => TestNet
+    }
+
+  def fromString(str: String): Result[Address] =
+    Result
+      .fromOption(ByteVector.fromBase58(str), Err(s"str: $str is not a legacy address"))
+      .flatMap(fromByteVector)
+
   def fromByteVector(bytes: ByteVector): Result[Address] =
     Result.fromOption(
       bytes.headOption.flatMap {
