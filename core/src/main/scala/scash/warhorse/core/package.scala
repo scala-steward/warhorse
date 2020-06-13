@@ -29,6 +29,13 @@ package object core extends SerdeSyntax with CNumericSyntax {
       Int.MaxValue
     )(P.identity[Int], _.toInt)
 
+  implicit val byteNumeric: CNumeric[Byte] =
+    CNumeric[Byte](
+      0xff,
+      Byte.MinValue,
+      Byte.MaxValue
+    )(b => BigInt(b.toInt), _.toByte)
+
   implicit class BigIntOps(n: BigInt) {
     def toUnsignedByteVector = {
       val bytes = ByteVector(n.toByteArray)

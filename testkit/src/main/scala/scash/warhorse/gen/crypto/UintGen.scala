@@ -1,10 +1,12 @@
 package scash.warhorse.gen.crypto
 
-import scash.warhorse.core.number.{ Uint32, Uint64, Uint8 }
+import scash.warhorse.core.number.{ Uint32, Uint5, Uint64, Uint8 }
 import scash.warhorse.gen.positiveBigInts
 import zio.test.Gen
 
 trait UintGen {
+
+  def uint5 = Gen.byte(Uint5.zero.num, Uint5.max.num).map(Uint5(_))
 
   /** Generates a random uint8 */
   def uint8 = Gen.int(Uint8.min.num, Uint8.max.num).map(Uint8(_))

@@ -1,39 +1,74 @@
 package scash.warhorse.core.blockchain
 
+import scash.warhorse.{ Err, Result }
+import scash.warhorse.Result.{ Failure, Successful }
+import scash.warhorse.core.crypto.hash.Hash160
+import scash.warhorse.core._
+import scash.warhorse.core.typeclass.Serde
+
+import scodec.bits._
+
+import scala.Predef._
+
+sealed trait CashAddr
+
 object CashAddr {
 
-  val P2PKHMainNet = 0x00.toByte
-  val P2SHMainNet  = 0x08.toByte
-  /*
-  def polyMod(data: ByteVector): ByteVector = {
-    var c = Uint64.one
-    data.foreach { d =>
-      val c0 = c >> 35;
-      (c & Uint64(0x07ffffffffL) << 5) ^ d.toInt
+  val P2KHbyte = 0x00.toByte
+  val P2SHbyte = 0x08.toByte
+  val P2KHchar = 'q'
+  val P2SHchar = 'p'
 
-      if (c0 hasBit 0x01) c ^= 0x98f2bc8e61L
-      if (c0 hasBit 0x02) c ^= 0x79b76d99e2L
-      if (c0 hasBit 0x04) c ^= 0xf33e5fb3c4L
-      if (c0 hasBit 0x08) c ^= 0xae2eabe2a8L
-      if (c0 hasBit 0x10) c ^= 0x1e4f43e470L
+  def fromLegacyAddr(addr: Address): Address = {
+    val payload = ByteVector.fromValidBase58(addr.value).tail.dropRight(4)
+    val net     = LegacyAddr.net(addr)
 
-    }
-    (c ^ Uint64.one).bytes
-  }
-
-
-  private def cons(net: Net, mainNetByte: Byte, testNetByte: Byte, hash: Hash160) = {
-    def genBase32(prefix: Byte): String = {
-      val bytes    = prefix +: hash.bytes
-      val checksum = Hasher[DoubleSha256].hash(bytes).bytes.take(5)
-      (bytes ++ checksum).toBase32
-    }
-    net match {
-      case MainNet => s"bitcoincash:${genBase32(mainNetByte)}"
-      case TestNet => s"bchtest:${genBase32(testNetByte)}"
-      case RegTest => s"bchreg:${genBase32(testNetByte)}"
+    addr match {
+      case _: P2PKH => cashAddr.p2pkh(net, Hash160(payload))
+      case _: P2SH  => cashAddr.p2sh(net, Hash160(payload))
     }
   }
 
-   */
+  lazy val serde: Serde[Address] = BCH32.bch32Serde.xmap[Address](
+    bch => toAddress(bch).require,
+    addr => toBCH32(addr.value).require
+  )
+
+  def fromString(str: String): Result[Address] =
+    for {
+      bch <- toBCH32(str)
+      ans <- toAddress(bch)
+    } yield ans
+
+  implicit val cashAddr = new Addr[CashAddr] {
+    def p2pkh(net: Net, hash: Hash160): P2PKH =
+      P2PKH(cons(net, P2KHbyte, hash))
+
+    def p2sh(net: Net, hash: Hash160): P2SH =
+      P2SH(cons(net, P2SHbyte, hash))
+  }
+
+  private def toBCH32(str: String): Result[BCH32] = {
+    val split = str.split(":")
+    if (split.size != 2) Failure(Err(s"$str has invalid cashaddr format"))
+    else if (!List("bitcoincash", "bchtest", "bchreg").contains(split(0)))
+      Failure(Err(s"Not a valid prefix: ${split(0)}"))
+    else BCH32.fromString(split(0), split(1))
+  }
+
+  private def toAddress(bch: BCH32): Result[Address] =
+    bch.payload.head match {
+      case P2KHchar => Successful(P2PKH(bch.toString))
+      case P2SHchar => Successful(P2SH(bch.toString))
+      case _        => Failure(Err(s"Invalid version byte for $bch"))
+    }
+
+  private def cons(net: Net, addrByte: Byte, h160: Hash160): String = {
+    val prefix = net match {
+      case MainNet => "bitcoincash"
+      case TestNet => "bchtest"
+      case RegTest => "bchreg"
+    }
+    BCH32.genBch32(prefix, addrByte, h160.bytes).toString
+  }
 }
