@@ -1,23 +1,56 @@
 package scash.warhorse.core
 
-import scash.warhorse.core.number.{ Uint5, Uint64 }
-import zio.ZIO
+import io.circe.Decoder
 
+import scash.warhorse.core.number.{ Uint5, Uint64 }
+import scash.warhorse.util.{ csvDecoder, parseJsonfromFile }
+
+import scodec.bits.ByteVector
+import scodec.bits._
+
+import zio.ZIO
+import zio.test.DefaultRunnableSpec
+import zio.test.Assertion.equalTo
 import zio.test._
 import zio.test.Assertion._
 
-import Predef.intWrapper
+import Predef.{ augmentString, intWrapper }
 
 object BCH32Spec extends DefaultRunnableSpec {
+  case class BCH32Test(payloadSizeBits: Int, vtype: Int, addr: String, payLoadHex: ByteVector)
 
-  // format: off
+  implicit val txValidDecoder: Decoder[List[BCH32Test]] =
+    csvDecoder.map(dataset =>
+      dataset.map(str => BCH32Test(str(0).toInt * 8, str(1).toInt, str(2), ByteVector.fromValidHex(str(3))))
+    )
+
+  private def testCheckSum(str: String): Boolean = {
+    val strs = str.split(":")
+    BCH32.verifyCheckSum(strs(0), strs(1))
+  }
+
+  private def testPolyMod(n: Int)(pad: Int, expected: Uint64) =
+    assert(BCH32.polyMod(Vector(Uint5(n.toByte)) ++ Vector.fill(pad)(Uint5.zero)))(equalTo(expected))
+
   val spec = suite("BCH32Spec")(
+    testM("larger test vectors")(
+      parseJsonfromFile[List[BCH32Test]]("bch32.json")
+        .flatMap(r =>
+          ZIO.foreach(r.require) { test =>
+            val split    = test.addr.split(":")
+            val typeByte = (test.vtype.toByte << 3).toByte
+            val bch      = BCH32.genBch32(split(0), typeByte, test.payLoadHex)
+            ZIO.succeed(assert(bch.toString)(equalTo(test.addr)))
+          }
+        )
+        .map(BoolAlgebra.collectAll(_).get)
+    ),
+    // format: off
     suite("polyMod")(
       test("empty")(assert(BCH32.polyMod(Vector.empty))(equalTo(Uint64.zero))),
       testM("all Uint5")(
         ZIO.foreach(1 to 31) { n =>
-          def polyVec(pad: Int, expected: Uint64) =
-            assert(BCH32.polyMod(Vector(Uint5(n.toByte)) ++ Vector.fill(pad)(Uint5.zero)))(equalTo(expected))
+          val polyVec = testPolyMod(n) _
           ZIO.succeed(
             polyVec(0, Uint64(0x21 ^ n)) &&
               polyVec(1, Uint64(0x401 ^ (n << 5))) &&
@@ -36,12 +69,13 @@ object BCH32Spec extends DefaultRunnableSpec {
       }
     ),
     suite("checkSum")(
-      test("prefix")(assert(BCH32.valid("prefix:x64nx6hz"))(isTrue)),
-      test("p")(assert(BCH32.valid("p:gpf8m4h7"))(isTrue)),
-      test("bitcoincash")(assert(BCH32.valid("bitcoincash:qpm2qsznhks23z7629mms6s4cwef74vcwvy22gdx6a"))(isTrue)),
-      test("bchtest")(assert(BCH32.valid("bchtest:testnetaddress4d6njnut"))(isTrue)),
-      test("bchreg")(assert(BCH32.valid("bchreg:555555555555555555555555555555555555555555555udxmlmrz"))(isTrue))
+      test("prefix")(assert(testCheckSum("prefix:x64nx6hz"))(isTrue)),
+      test("p")(assert(testCheckSum("p:gpf8m4h7"))(isTrue)),
+      test("bitcoincash2")(assert(testCheckSum("bitcoincash:qr6m7j9njldwwzlg9v7v53unlr4jkmx6eylep8ekg2"))(isTrue)),
+      test("bitcoincash")(assert(testCheckSum("bitcoincash:qpm2qsznhks23z7629mms6s4cwef74vcwvy22gdx6a"))(isTrue)),
+      test("bchtest")(assert(testCheckSum("bchtest:testnetaddress4d6njnut"))(isTrue)),
+      test("bchreg")(assert(testCheckSum("bchreg:555555555555555555555555555555555555555555555udxmlmrz"))(isTrue))
     )
   )
-  // format: off
+  // format: on
 }

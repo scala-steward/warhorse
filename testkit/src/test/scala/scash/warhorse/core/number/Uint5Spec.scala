@@ -10,9 +10,9 @@ import scodec.bits._
 
 object Uint5Spec extends DefaultRunnableSpec {
   val spec = suite("Uint5Spec")(
-    test("cast b")(assert(Uint5.cast('b'.toByte))(equalTo(Uint5(2.toByte)))),
-    test("cast i")(assert(Uint5.cast('i'.toByte))(equalTo(Uint5(9.toByte)))),
-    test("cast t")(assert(Uint5.cast('t'.toByte))(equalTo(Uint5(20.toByte)))),
+    test("cast b")(assert(Uint5.cast('b'))(equalTo(Uint5(2.toByte)))),
+    test("cast i")(assert(Uint5.cast('i'))(equalTo(Uint5(9.toByte)))),
+    test("cast t")(assert(Uint5.cast('t'))(equalTo(Uint5(20.toByte)))),
     suite("serde")(
       test("toBin Max")(assert(Uint5.max.bits)(equalTo(bin"11111"))),
       test("toBin Zero")(assert(Uint5.zero.bits)(equalTo(bin"00000"))),
