@@ -11,12 +11,6 @@ case class P2PKH(value: String) extends Address
 case class P2SH(value: String)  extends Address
 
 object Address {
-  def asP2PKH(addr: Address): Option[P2PKH] =
-    addr match {
-      case p: P2PKH => Some(p)
-      case _: P2SH  => None
-    }
-
   def apply(addr: String): Result[Address] =
     LegacyAddr.fromString(addr) //orElse CashAddr.fromString(addr)
 
