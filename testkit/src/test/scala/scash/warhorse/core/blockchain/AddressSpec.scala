@@ -6,22 +6,21 @@ import scash.warhorse._
 import scash.warhorse.core._
 import scash.warhorse.core.crypto.hash.Hash160
 import scash.warhorse.util._
+
 import scodec.bits.ByteVector
-import zio.ZIO
+
 import zio.test.DefaultRunnableSpec
 import zio.test.Assertion.equalTo
 import zio.test._
 
 object AddressSpec extends DefaultRunnableSpec {
   case class ValidAddressTest(addr: String, hash: ByteVector, chain: Net)
+  case class InvalidAddressTest(addr: String)
 
-  implicit val txValidDecoder: Decoder[List[ValidAddressTest]] =
-    csvDecoder.map(dataset =>
-      dataset.map(str => ValidAddressTest(str(0), ByteVector.fromValidHex(str(1)), Net(str(2))))
-    )
+  implicit val txValidDecoder: Decoder[ValidAddressTest] =
+    rowCoder(str => ValidAddressTest(str(0), ByteVector.fromValidHex(str(1)), Net(str(2))))
 
-  implicit val txInvalidlistDecoder: Decoder[List[String]] =
-    csvDecoder.map(dataset => dataset.map(str => str(0)))
+  implicit val txInvalidlistDecoder: Decoder[InvalidAddressTest] = rowCoder(str => InvalidAddressTest(str(0)))
 
   val spec = suite("AddressSpec")(
     suite("symmetry")(
@@ -30,28 +29,19 @@ object AddressSpec extends DefaultRunnableSpec {
     ),
     suite("fromBase58")(
       testM("fail")(
-        parseJsonfromFile[List[String]]("key_io_invalid.json")
-          .flatMap(r => ZIO.foreach(r.require)(base58 => ZIO.succeed(assert(Address(base58))(failure))))
-          .map(BoolAlgebra.collectAll(_).get)
+        jsonFromCSV[InvalidAddressTest]("key_io_invalid.json")(base58 => assert(Address(base58.addr))(failure))
       ),
       testM("success")(
-        parseJsonfromFile[List[ValidAddressTest]]("valid_legacy_address.json")
-          .flatMap(r =>
-            ZIO.foreach(r.require) { test =>
-              val ans      = Address(test.addr)
-              val expected = ans.map {
-                case P2PKH(_) =>
-                  Addr[LegacyAddr].p2pkh(test.chain, test.hash.drop(3).dropRight(2).decodeExact_[Hash160])
-                case P2SH(_)  =>
-                  Addr[LegacyAddr].p2sh(test.chain, test.hash.drop(2).dropRight(1).decodeExact_[Hash160])
-              }
-              ZIO.succeed(
-                assert(ans.map(_.value))(success(test.addr)) &&
-                  assert(ans)(equalTo(expected))
-              )
-            }
-          )
-          .map(BoolAlgebra.collectAll(_).get)
+        jsonFromCSV[ValidAddressTest]("valid_legacy_address.json") { test =>
+          val ans      = Address(test.addr)
+          val expected = ans.map {
+            case P2PKH(_) =>
+              Addr[LegacyAddr].p2pkh(test.chain, test.hash.drop(3).dropRight(2).decodeExact_[Hash160])
+            case P2SH(_)  =>
+              Addr[LegacyAddr].p2sh(test.chain, test.hash.drop(2).dropRight(1).decodeExact_[Hash160])
+          }
+          assert(ans.map(_.value))(success(test.addr)) && assert(ans)(equalTo(expected))
+        }
       )
     )
   )

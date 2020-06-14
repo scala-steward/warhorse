@@ -1,12 +1,9 @@
 package scash.warhorse.core
 
-import io.circe.Decoder
-
 import scash.warhorse.core.number.{ Uint5, Uint64 }
-import scash.warhorse.util.{ csvDecoder, parseJsonfromFile }
+import scash.warhorse.util._
 
 import scodec.bits.ByteVector
-import scodec.bits._
 
 import zio.ZIO
 import zio.test.DefaultRunnableSpec
@@ -19,10 +16,8 @@ import Predef.{ augmentString, intWrapper }
 object BCH32Spec extends DefaultRunnableSpec {
   case class BCH32Test(payloadSizeBits: Int, vtype: Int, addr: String, payLoadHex: ByteVector)
 
-  implicit val txValidDecoder: Decoder[List[BCH32Test]] =
-    csvDecoder.map(dataset =>
-      dataset.map(str => BCH32Test(str(0).toInt * 8, str(1).toInt, str(2), ByteVector.fromValidHex(str(3))))
-    )
+  implicit val bch32Decoder =
+    rowCoder(str => BCH32Test(str(0).toInt * 8, str(1).toInt, str(2), ByteVector.fromValidHex(str(3))))
 
   private def testCheckSum(str: String): Boolean = {
     val strs = str.split(":")
@@ -34,16 +29,20 @@ object BCH32Spec extends DefaultRunnableSpec {
 
   val spec = suite("BCH32Spec")(
     testM("larger test vectors")(
-      parseJsonfromFile[List[BCH32Test]]("bch32.json")
-        .flatMap(r =>
-          ZIO.foreach(r.require) { test =>
-            val split    = test.addr.split(":")
-            val typeByte = (test.vtype.toByte << 3).toByte
-            val bch      = BCH32.genBch32(split(0), typeByte, test.payLoadHex)
-            ZIO.succeed(assert(bch.toString)(equalTo(test.addr)))
-          }
-        )
-        .map(BoolAlgebra.collectAll(_).get)
+      jsonFromCSV[BCH32Test]("bch32.json") { test =>
+        val split    = test.addr.split(":")
+        val typeByte = (test.vtype.toByte << 3).toByte
+        val bch      = BCH32.genBch32(split(0), typeByte, test.payLoadHex)
+        assert(bch.toString)(equalTo(test.addr))
+      }
+    ),
+    testM("decode")(
+      jsonFromCSV[BCH32Test]("bch32.json") { test =>
+        val split    = test.addr.split(":")
+        val typeByte = (test.vtype.toByte << 3).toByte
+        val bch      = BCH32.genBch32(split(0), typeByte, test.payLoadHex)
+        assert(bch.toString)(equalTo(test.addr))
+      }
     ),
     // format: off
     suite("polyMod")(
