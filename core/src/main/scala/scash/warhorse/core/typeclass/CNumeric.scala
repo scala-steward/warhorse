@@ -24,6 +24,11 @@ trait CNumeric[A] {
   def and[A1: CNumeric](a: A, a1: A1): A = lift(num(a) & CNumeric[A1].num(a1))
   def xor[A1: CNumeric](a: A, a1: A1): A = lift(num(a) ^ CNumeric[A1].num(a1))
 
+  def hasBit[A1: CNumeric](a: A, a1: A1): Boolean = {
+    val num2 = CNumeric[A1].num(a1)
+    (num(a) & num2) == num2
+  }
+
   def negative(a: A): A = lift(-num(a))
 
   def shiftL(a: A, a1: Int): A = lift((num(a) << a1) & andMask)
@@ -66,9 +71,11 @@ trait CNumericSyntax {
     def <<(num: Int): A                     = CNumeric[A].shiftL(a, num)
     def >>(num: Int): A                     = CNumeric[A].shiftR(a, num)
 
-    def |(num: A): A = CNumeric[A].or(a, num)
-    def &(num: A): A = CNumeric[A].and(a, num)
-    def ^(num: A): A = CNumeric[A].xor(a, num)
-    def unary_- : A  = CNumeric[A].negative(a)
+    def |[A1: CNumeric](num: A1): A = CNumeric[A].or(a, num)
+    def &[A1: CNumeric](num: A1): A = CNumeric[A].and(a, num)
+    def ^[A1: CNumeric](num: A1): A = CNumeric[A].xor(a, num)
+    def unary_- : A                 = CNumeric[A].negative(a)
+
+    def hasBit[A1: CNumeric](num: A1): Boolean = CNumeric[A].hasBit(a, num)
   }
 }

@@ -4,12 +4,18 @@ import java.security.Security
 
 import org.bouncycastle.crypto.Digest
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+
+import scash.warhorse.core.typeclass.Serde
+import scash.warhorse.core._
+
 import scodec.bits.ByteVector
 
 trait Hasher[A] {
   def hasher: Digest
 
   def cons(b: ByteVector): A
+
+  def hash[S: Serde](s: S): A = hash(s.bytes)
 
   def hash(a: ByteVector): A = (genHash(hasher) _ andThen cons)(a)
 
