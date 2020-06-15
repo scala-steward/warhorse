@@ -3,11 +3,7 @@ package scash.warhorse.core
 import scash.warhorse.{ Err, Result }
 import scash.warhorse.Result.{ Failure, Successful }
 import scash.warhorse.core.number.{ Uint5, Uint64 }
-import scash.warhorse.core.typeclass.Serde
-
-import scodec.Codec
-import scodec.bits.{ BitVector, ByteVector }
-import scodec.codecs.{ bits, _ }
+import scodec.bits.{ ByteVector }
 
 import Predef._
 import scala.util.Try
@@ -15,7 +11,6 @@ import scala.util.Try
 /**
 https://github.com/bitcoincashorg/bitcoincash.org/blob/master/spec/cashaddr.md
  */
-
 case class BCH32(prefix: String, payload: String) {
   override def toString: String = s"$prefix:$payload"
 }
@@ -42,16 +37,29 @@ object BCH32                                      {
     c ^ 1
   }
 
-  def verifyCheckSum(prefix: String, payload: String): Boolean = {
-    val payLoadVec = payload.map(Charset.index _ andThen Uint5.apply).toVector
-    val prefixVec  = prefix.map(Uint5.cast).toVector
-    val sepVec     = Vector(Uint5.zero)
+  def verifyVersionByte(payload: String): Boolean =
+    Charset
+      .fromBase32(payload.dropRight(8))
+      .map { payloadVec =>
+        val (headBits, payLoadBits) = payloadVec.map(_.bits).reduce(_ ++ _).splitAt(8)
+        val headByte                = headBits.toByte(false)
+        val payLoadBytes            = payLoadBits.dropRight(payLoadBits.size % 8)
 
-    polyMod(prefixVec ++ sepVec ++ payLoadVec) === Uint64.zero
-  }
+        !(headByte hasBit 0x80) && (hashSizeMap(headByte & 0x07) == payLoadBytes.size)
+      }
+      .getOrElse(false)
 
-  def calculateCheckSum(prefix: String, payloadVec: Vector[Uint5]): Vector[Uint5] = {
-    val prefixVec         = prefix.map(s => Uint5((s & 0x1f).toByte)).toVector
+  def verifyCheckSum(prefix: String, payload: String): Boolean =
+    Charset
+      .fromBase32(payload)
+      .map { payloadVec =>
+        val prefixVec = prefix.map(Uint5.cast).toVector
+        val sepVec    = Vector(Uint5.zero)
+        polyMod(prefixVec ++ sepVec ++ payloadVec) === Uint64.zero
+      }
+      .getOrElse(false)
+
+  def calculateCheckSum(prefixVec: Vector[Uint5], payloadVec: Vector[Uint5]): Vector[Uint5] = {
     val sepVec            = Vector(Uint5.zero)
     val chkSumTemplateVec = Vector.fill(8)(Uint5.zero)
     val poly              = polyMod(prefixVec ++ sepVec ++ payloadVec ++ chkSumTemplateVec)
@@ -60,93 +68,29 @@ object BCH32                                      {
       .map(i => Uint5((poly >> 5 * (7 - i) & 0x1f).num.toByte))
   }
 
-  lazy val bch32Serde: Serde[BCH32] = Serde(Codecs.bchCodec)
-
   def fromString(prefix: String, payLoad: String): Result[BCH32] =
-    for {
-      prefixBytes <- Charset.fromBase32(prefix)
-      payLoad     <- Charset.fromBase32(payLoad)
-      ans         <- bch32Serde.decodeValue(prefixBytes ++ payLoad)
-    } yield ans
+    if (!verifyVersionByte(payLoad)) Failure(Err(s"$prefix:$payLoad the first byte is incorrect"))
+    else if (!verifyCheckSum(prefix, payLoad)) Failure(Err(s"$prefix:$payLoad does not have a valid checksum"))
+    else Successful(BCH32(prefix, payLoad))
 
   def genBch32(prefix: String, vtype: Byte, payload: ByteVector): BCH32 = {
-    val versionByte   = (vtype | hashSizeMap.indexOf(payload.size * 8)).toByte
-    val vec           = bytestoUint5(versionByte +: payload)
-    val checkSum      = calculateCheckSum(prefix, vec)
-    val base32Payload = Charset.toBase32(vec ++ checkSum)
-    BCH32(prefix, base32Payload)
-  }
-
-  private def bytestoUint5(bytes: ByteVector): Vector[Uint5] = {
-    val bits     = bytes.bits
-    val fraction = bits.size % 5
-    val padding  =
+    val versionByte = (vtype | hashSizeMap.indexOf(payload.size * 8)).toByte
+    val bits        = (versionByte +: payload).bits
+    val fraction    = bits.size % 5
+    val padding     =
       if (fraction == 0) bits
       else bits.padRight(bits.size + 5 - fraction)
 
-    padding
+    val payloadVec = padding
       .grouped(5)
       .map(_.decode_[Uint5])
       .toVector
-  }
 
-  private object Codecs {
+    val prefixVec     = prefix.map(Uint5.cast).toVector
+    val checkSum      = calculateCheckSum(prefixVec, payloadVec)
+    val base32Payload = Charset.toBase32(payloadVec ++ checkSum)
 
-    val hashBytesCodec = bits(3).exmap[Int](
-      b => {
-        val idx = b.toByte(false)
-        if (idx >= hashSizeMap.length && idx < 0) Failure(Err(s"hashbits size failed: idx $idx is invalid")).toAttempt
-        else Successful(hashSizeMap(b.toByte(false).toInt) / 8).toAttempt
-      },
-      i => {
-        val bits = hashSizeMap.indexOf(i)
-        if (bits == -1) Failure(Err(s"hashbits failed: $i is invalid size")).toAttempt
-        else Successful(BitVector(bits)).toAttempt
-      }
-    )
-
-    val typeAddrCodec =
-      (bits(5) ~ peek(bits(3)))
-        .exmap[Byte](
-          bb =>
-            if (BitVector.bit(bb._1.head) != BitVector.zero)
-              Failure(Err(s"Versionbit must be 0. it is: ${bb._1(0)}")).toAttempt
-            else Successful((bb._1 ++ bb._2).toByte(false)).toAttempt,
-          b => Successful(BitVector(b).splitAt(5)).toAttempt
-        )
-
-    val payLoadCodec: Codec[String] =
-      (typeAddrCodec ~ byteVectorCodec(hashBytesCodec) ~ byteVectorCodec(provide(5)))
-        .exmap[String](
-          bb => Successful(Charset.toBase32((bb._1._1 +: bb._1._2) ++ bb._2)).toAttempt,
-          str =>
-            Charset
-              .fromBase32(str)
-              .map { b =>
-                val (verPayload, chkSum) = b.splitAt(b.size - 5)
-                ((verPayload.head, verPayload.tail), chkSum)
-              }
-              .toAttempt
-        )
-
-    val prefixCodec =
-      variableSizeDelimited(constant(':'.toByte), bytes)
-        .exmap[String](
-          b => Successful(Charset.toBase32(b)).toAttempt,
-          str => Charset.fromBase32(str).toAttempt
-        )
-
-    val bchCodec =
-      (prefixCodec ~ payLoadCodec)
-        .exmap[BCH32](
-          str =>
-            if (verifyCheckSum(str._1, str._2)) Successful(BCH32(str._1, str._2)).toAttempt
-            else Failure(Err(s"addr ${(str._1, str._2)} doesnt have valid payload")).toAttempt,
-          bch32 => Successful((bch32.prefix, bch32.payload)).toAttempt
-        )
-
-    def byteVectorCodec(size: Codec[Int]) = vectorOfN(size, byte).xmap[ByteVector](ByteVector(_), _.toArray.toVector)
-
+    BCH32(prefix, base32Payload)
   }
 
   private object Charset {
@@ -158,11 +102,10 @@ object BCH32                                      {
       'c', 'e', '6', 'm', 'u', 'a', '7', 'l'
       )
     // format: on
-
-    def fromBase32(str: String): Result[ByteVector] =
-      Result.fromTry(Try(ByteVector(str.map(index))))
-
-    def toBase32(bb: ByteVector): String = (bytestoUint5 _ andThen toBase32)(bb)
+    def fromBase32(str: String): Result[Vector[Uint5]] =
+      Result.fromTry(
+        Try(str.map(index _ andThen Uint5.apply).toVector)
+      )
 
     def toBase32(bb: Vector[Uint5]): String = {
       val str = new StringBuffer
@@ -170,9 +113,9 @@ object BCH32                                      {
       str.toString
     }
 
-    def char(i: Int): Char = Chars(i)
+    private def char(i: Int): Char = Chars(i)
 
-    def index(c: Char): Byte = {
+    private def index(c: Char): Byte = {
       val idx = Chars.indexOf(c)
       if (idx >= 0) idx.toByte
       else throw new IllegalArgumentException

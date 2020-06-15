@@ -1,7 +1,9 @@
 package scash.warhorse.core.blockchain
 
+import scash.warhorse.Result
 import scash.warhorse.core.crypto.PublicKey
 import scash.warhorse.core.crypto.hash.{ Hash160, Hasher }
+
 import scodec.bits.ByteVector
 
 trait Addr[A] {
@@ -16,6 +18,8 @@ trait Addr[A] {
   //TODO: redeemScript
   def p2sh(net: Net, redeemScript: ByteVector): P2SH =
     p2sh(net, Hasher[Hash160].hash(redeemScript))
+
+  def decode(string: String): Result[Address]
 }
 
 object Addr {

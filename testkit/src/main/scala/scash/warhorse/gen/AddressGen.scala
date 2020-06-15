@@ -30,5 +30,8 @@ trait AddressGen {
       spubkey <- scriptPubKey
     } yield (net, spubkey)
 
+  def cashAddr: Gen[Random with Sized, Address]      = Gen.oneOf(p2pkh, p2sh)
   def legacyAddress: Gen[Random with Sized, Address] = Gen.oneOf(p2pkh, p2sh)
+
+  def address = Gen.oneOf(cashAddr, legacyAddress)
 }
