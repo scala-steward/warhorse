@@ -3,7 +3,8 @@ package scash.warhorse.core
 import scash.warhorse.Result
 import scodec.bits.ByteVector
 import scash.warhorse.core.crypto.Secp256k1._
-import scash.warhorse.core.crypto.hash.{ Hasher, Sha256 }
+import scash.warhorse.core.crypto.hash.Sha256
+import scash.warhorse.core.typeclass.Hasher
 
 package object crypto {
   def genPrivkey: Result[PrivateKey] = secp256k1KeyGen.genPrivkey

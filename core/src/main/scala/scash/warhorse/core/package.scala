@@ -2,7 +2,8 @@ package scash.warhorse
 
 import java.math.BigInteger
 
-import scash.warhorse.core.typeclass.{ CNumeric, CNumericSyntax, SerdeSyntax }
+import scash.warhorse.Result.{ Failure, Successful }
+import scash.warhorse.core.typeclass._
 import scodec.bits.ByteVector
 
 package object core extends SerdeSyntax with CNumericSyntax {
@@ -57,4 +58,35 @@ package object core extends SerdeSyntax with CNumericSyntax {
   implicit class ArrayByteOps(array: Array[Byte]) {
     def toByteVector = ByteVector.view(array)
   }
+
+  implicit class StringOps(str: String) {
+    def hash[A: Hasher]: A = Hasher[A].hash(str)
+  }
+
+  implicit class ByteVectorOps(byteVector: ByteVector) {
+
+    def hash[A: Hasher]: A = Hasher[A].hash(byteVector)
+
+    /** Returns the successful value if present; otherwise throws an `IllegalArgumentException`. */
+    def decode_[A: Serde]: A = decode.require
+
+    /** Returns the Successful[A] if decoding was successful. otherwise `Failure(cause)` */
+    def decode[A: Serde]: Result[A] = Serde[A].decodeValue(byteVector)
+
+    /** Decode Bytevector into type `Result[A]`. if there are remainder bytes it will return Failure */
+    def decodeExact[A: Serde]: Result[A] =
+      Serde[A].decode(byteVector).flatMap { a =>
+        if (a.remainder.isEmpty) Successful(a.value)
+        else Failure(Err(s"Decoding left remainder bits: ${a.remainder.toByteVector.size}"))
+      }
+
+    /** Returns the successful value if present; otherwise throws an `IllegalArgumentException` if decodeExact fails. */
+    def decodeExact_[A: Serde]: A = decodeExact.require
+
+    def toBigInt: BigInt = BigInt(1, byteVector.toArray)
+
+    def toBigInteger: BigInteger = new BigInteger(1, byteVector.toArray)
+
+  }
+
 }

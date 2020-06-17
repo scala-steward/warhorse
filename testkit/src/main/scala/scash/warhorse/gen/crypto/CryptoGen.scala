@@ -1,7 +1,9 @@
 package scash.warhorse.gen.crypto
 
-import scash.warhorse.core.crypto.hash.{ DoubleSha256, Hash160, Hasher, Sha256 }
+import scash.warhorse.core.crypto.hash.{ DoubleSha256, Hash160, Sha256 }
 import scash.warhorse.gen
+import scash.warhorse.core._
+
 import scodec.bits.ByteVector
 import zio.test.{ Gen, Sized }
 import zio.random.Random
@@ -18,7 +20,7 @@ trait CryptoGen {
 
   def hash160(str: String): Gen[Any, Hash160] = hash160(ByteVector.view(str.getBytes))
 
-  def hash160(bytes: ByteVector): Gen[Any, Hash160] = Gen.const(Hasher[Hash160].hash(bytes))
+  def hash160(bytes: ByteVector): Gen[Any, Hash160] = Gen.const(bytes.hash[Hash160])
 
   def sha256: Gen[Random with Sized, Sha256] =
     for {
@@ -32,7 +34,7 @@ trait CryptoGen {
 
   def sha256(str: String): Gen[Any, Sha256] = sha256(ByteVector.view(str.getBytes))
 
-  def sha256(bytes: ByteVector): Gen[Any, Sha256] = Gen.const(Hasher[Sha256].hash(bytes))
+  def sha256(bytes: ByteVector): Gen[Any, Sha256] = Gen.const(bytes.hash[Sha256])
 
   def doubleSha256(str: String): Gen[Any, DoubleSha256] =
     doubleSha256(ByteVector.view(str.getBytes))
@@ -44,5 +46,5 @@ trait CryptoGen {
     } yield hash
 
   def doubleSha256(bytes: ByteVector): Gen[Any, DoubleSha256] =
-    Gen.const(Hasher[DoubleSha256].hash(bytes))
+    Gen.const(bytes.hash[DoubleSha256])
 }

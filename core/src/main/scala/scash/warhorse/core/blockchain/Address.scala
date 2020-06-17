@@ -2,8 +2,8 @@ package scash.warhorse.core.blockchain
 
 import scash.warhorse.Result
 import scash.warhorse.core.crypto.PublicKey
-import scash.warhorse.core.crypto.hash.{ Hash160, Hasher }
-
+import scash.warhorse.core.crypto.hash.Hash160
+import scash.warhorse.core._
 import scodec.bits.ByteVector
 
 sealed trait Address extends Product with Serializable { self =>
@@ -17,10 +17,10 @@ case class P2SH(net: Net, redeemScriptHash: Hash160) extends Address
 object Address {
 
   def p2pkh(net: Net, pubKey: PublicKey): P2PKH =
-    P2PKH(net, Hasher[Hash160].hash(pubKey))
+    P2PKH(net, pubKey.hash[Hash160])
 
   def p2sh(net: Net, redeemScript: ByteVector): P2SH =
-    P2SH(net, Hasher[Hash160].hash(redeemScript))
+    P2SH(net, redeemScript.hash[Hash160])
 
   def apply(addr: String): Result[Address] =
     LegacyAddr.addrShow.decode(addr) orElse CashAddr.addrShow.decode(addr)

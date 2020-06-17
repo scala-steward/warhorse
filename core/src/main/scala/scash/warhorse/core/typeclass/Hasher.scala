@@ -1,13 +1,10 @@
-package scash.warhorse.core.crypto.hash
+package scash.warhorse.core.typeclass
 
 import java.security.Security
 
 import org.bouncycastle.crypto.Digest
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-
-import scash.warhorse.core.typeclass.Serde
 import scash.warhorse.core._
-
 import scodec.bits.ByteVector
 
 trait Hasher[A] {

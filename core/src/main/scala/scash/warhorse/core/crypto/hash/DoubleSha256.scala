@@ -1,10 +1,8 @@
 package scash.warhorse.core.crypto.hash
 
 import org.bouncycastle.crypto.Digest
-
 import scash.warhorse.core.crypto.hash.Sha256.sha256Serde
-import scash.warhorse.core.typeclass.Serde
-
+import scash.warhorse.core.typeclass.{ Hasher, Serde }
 import scodec.bits.ByteVector
 
 case class DoubleSha256(private[crypto] val b: ByteVector)

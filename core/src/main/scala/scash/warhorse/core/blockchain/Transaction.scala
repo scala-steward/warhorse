@@ -1,8 +1,9 @@
 package scash.warhorse.core.blockchain
 
-import scash.warhorse.core.crypto.hash.{ DoubleSha256, DoubleSha256B, Hasher }
+import scash.warhorse.core.crypto.hash.{ DoubleSha256, DoubleSha256B }
 import scash.warhorse.core.number.{ Int32, Uint32 }
 import scash.warhorse.core.typeclass.Serde
+import scash.warhorse.core._
 
 case class Transaction(
   version: Int32,
@@ -14,7 +15,7 @@ case class Transaction(
   def txId: DoubleSha256 =
     Transaction.transactionSerde
       .encode(self)
-      .map(Hasher[DoubleSha256].hash)
+      .map(_.hash[DoubleSha256])
       .require
 
   def txIdB: DoubleSha256B = DoubleSha256.toBigEndian(txId)

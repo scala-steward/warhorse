@@ -2,11 +2,9 @@ package scash.warhorse.core.crypto.hash
 
 import org.bouncycastle.crypto.Digest
 import org.bouncycastle.crypto.digests.RIPEMD160Digest
-
 import scash.warhorse.Err
 import scash.warhorse.Result.{ Failure, Successful }
-import scash.warhorse.core.typeclass.Serde
-
+import scash.warhorse.core.typeclass.{ Hasher, Serde }
 import scodec.DecodeResult
 import scodec.bits.ByteVector
 

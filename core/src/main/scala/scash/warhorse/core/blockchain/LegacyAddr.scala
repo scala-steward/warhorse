@@ -2,7 +2,7 @@ package scash.warhorse.core.blockchain
 
 import scash.warhorse.Result.Failure
 import scash.warhorse.{ Err, Result }
-import scash.warhorse.core.crypto.hash.{ DoubleSha256, Hash160, Hasher }
+import scash.warhorse.core.crypto.hash.{ DoubleSha256, Hash160 }
 import scash.warhorse.core._
 import scash.warhorse.core.typeclass.Show
 import scodec.bits.ByteVector
@@ -20,7 +20,7 @@ object LegacyAddr {
   val addrShow = new Show[Address] {
     private def cons(byte: Byte, h160: Hash160): String = {
       val bytes    = byte +: h160.bytes
-      val checksum = Hasher[DoubleSha256].hash(bytes).bytes.take(4)
+      val checksum = bytes.hash[DoubleSha256].bytes.take(4)
       (bytes ++ checksum).toBase58
     }
 
@@ -42,7 +42,7 @@ object LegacyAddr {
             head  <- bytes.headOption
             payload = bytes.tail.dropRight(4)
             ans <-
-              if (bytes.takeRight(4) != Hasher[DoubleSha256].hash(bytes.dropRight(4)).bytes.take(4)) None
+              if (bytes.takeRight(4) != bytes.dropRight(4).hash[DoubleSha256].bytes.take(4)) None
               else
                 head match {
                   case P2PKHMainNet => Some(P2PKH(MainNet, payload.decode_[Hash160]))
