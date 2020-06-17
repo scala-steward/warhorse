@@ -11,11 +11,7 @@ import scala.util.Try
 /**
 https://github.com/bitcoincashorg/bitcoincash.org/blob/master/spec/cashaddr.md
  */
-case class BCH32(prefix: String, payload: String) {
-  override def toString: String = s"$prefix:$payload"
-}
-
-object BCH32                                      {
+object Base32 {
   private val gen = List(
     (0x01, 0x98f2bc8e61L),
     (0x02, 0x79b76d99e2L),
@@ -37,17 +33,18 @@ object BCH32                                      {
     c ^ 1
   }
 
-  def verifyVersionByte(payload: String): Boolean =
+  def unpackPayload(payload: String): Result[ByteVector] =
     Charset
       .fromBase32(payload.dropRight(8))
-      .map { payloadVec =>
+      .flatMap { payloadVec =>
         val (headBits, payLoadBits) = payloadVec.map(_.bits).reduce(_ ++ _).splitAt(8)
         val headByte                = headBits.toByte(false)
         val payLoadBytes            = payLoadBits.dropRight(payLoadBits.size % 8)
 
-        !(headByte hasBit 0x80) && (hashSizeMap(headByte & 0x07) == payLoadBytes.size)
+        if (!(headByte hasBit 0x80) && (hashSizeMap(headByte & 0x07) == payLoadBytes.size))
+          Successful(headByte +: payLoadBytes.bytes)
+        else Failure(Err(s"version byte is not valid $headByte"))
       }
-      .getOrElse(false)
 
   def verifyCheckSum(prefix: String, payload: String): Boolean =
     Charset
@@ -68,12 +65,14 @@ object BCH32                                      {
       .map(i => Uint5((poly >> 5 * (7 - i) & 0x1f).num.toByte))
   }
 
-  def fromString(prefix: String, payLoad: String): Result[BCH32] =
-    if (!verifyVersionByte(payLoad)) Failure(Err(s"$prefix:$payLoad the first byte is incorrect"))
-    else if (!verifyCheckSum(prefix, payLoad)) Failure(Err(s"$prefix:$payLoad does not have a valid checksum"))
-    else Successful(BCH32(prefix, payLoad))
+  def fromBase32(prefix: String, payLoad: String): Result[ByteVector] =
+    unpackPayload(payLoad)
+      .flatMap(bytes =>
+        if (!verifyCheckSum(prefix, payLoad)) Failure(Err(s"$prefix:$payLoad does not have a valid checksum"))
+        else Successful(bytes)
+      )
 
-  def genBch32(prefix: String, vtype: Byte, payload: ByteVector): BCH32 = {
+  def toBase32(prefix: String, vtype: Byte, payload: ByteVector): String = {
     val versionByte = (vtype | hashSizeMap.indexOf(payload.size * 8)).toByte
     val bits        = (versionByte +: payload).bits
     val fraction    = bits.size % 5
@@ -90,7 +89,7 @@ object BCH32                                      {
     val checkSum      = calculateCheckSum(prefixVec, payloadVec)
     val base32Payload = Charset.toBase32(payloadVec ++ checkSum)
 
-    BCH32(prefix, base32Payload)
+    s"$prefix:$base32Payload"
   }
 
   private object Charset {
