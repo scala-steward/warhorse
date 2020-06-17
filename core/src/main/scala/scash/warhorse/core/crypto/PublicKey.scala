@@ -10,7 +10,7 @@ sealed trait PublicKey { self =>
 
   def compress: PublicKey =
     self match {
-      case c: PublicKey.PKeyCompressed   => c
+      case c: PublicKey.PKeyCompressed => c
       case u: PublicKey.PKeyUnCompressed =>
         val prefix =
           if ((u.b(64) & 0xff) % 2 == 0) 0x02.toByte

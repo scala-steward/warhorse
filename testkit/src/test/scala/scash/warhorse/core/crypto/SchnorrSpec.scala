@@ -57,9 +57,9 @@ object SchnorrSpec extends DefaultRunnableSpec {
     test("deterministic") {
       val data = hex"5255683DA567900BFD3E786ED8836A4E7763C221BF1AC20ECE2A5171B9199E8A"
       val sec  = hex"12B004FFF7F4B69EF8650E767F18F11EDE158148B425660723B9F9A66E61F747"
-      val exp  =
+      val exp =
         hex"2C56731AC2F7A7E7F11518FC7722A166B02438924CA9D8B4D111347B81D0717571846DE67AD3D913A8FDF9D8F3F73161A4C48AE81CB183B214765FEB86E255CE"
-      val ans  = for {
+      val ans = for {
         priv <- PrivateKey(sec)
         pub  <- priv.genPublicKeyCompressed
         sig  <- crypto.sign[Schnorr](data, priv)

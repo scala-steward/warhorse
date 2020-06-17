@@ -21,7 +21,7 @@ object AddressSpec extends DefaultRunnableSpec {
 
   implicit val txInvalidlistDecoder: Decoder[InvalidAddressTest] = rowCoder(str => InvalidAddressTest(str(0)))
 
-  val fromLegacyList                    = List(
+  val fromLegacyList = List(
     ("1BpEi6DfDAUFd7GtittLSdBeYJvcoaVggu", "bitcoincash:qpm2qsznhks23z7629mms6s4cwef74vcwvy22gdx6a"),
     ("1KXrWXciRDZUpQwQmuM1DbwsKDLYAYsVLR", "bitcoincash:qr95sy3j9xwd2ap32xkykttr4cvcu7as4y0qverfuy"),
     ("16w1D5WRVKJuZUsSRzdLp9w3YGcgoxDXb", "bitcoincash:qqq3728yw0y47sqn6l2na30mcw6zm78dzqre909m2r"),
@@ -52,8 +52,8 @@ object AddressSpec extends DefaultRunnableSpec {
       ),
       testM("success Legacy")(
         jsonFromCSV[ValidAddressTest]("valid_legacy_address.json") { test =>
-          val ans      = Address(test.addr)
-          val net      = if (test.chain == RegTest) TestNet else test.chain
+          val ans = Address(test.addr)
+          val net = if (test.chain == RegTest) TestNet else test.chain
           val expected = ans.map {
             case _: P2PKH => P2PKH(net, test.hash.drop(3).dropRight(2).decodeExact_[Hash160])
             case _: P2SH  => P2SH(net, test.hash.drop(2).dropRight(1).decodeExact_[Hash160])

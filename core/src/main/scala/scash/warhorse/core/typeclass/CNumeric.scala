@@ -36,7 +36,7 @@ trait CNumeric[A] {
   def shiftR(a: A, a1: Int): A = lift(num(a) >> a1)
 }
 
-object CNumeric   {
+object CNumeric {
 
   def apply[A](implicit n: CNumeric[A]): CNumeric[A] = n
 

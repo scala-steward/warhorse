@@ -38,18 +38,19 @@ object LegacyAddr {
       else
         Result.fromOption(
           for {
-            bytes  <- ByteVector.fromBase58(addr)
-            head   <- bytes.headOption
+            bytes <- ByteVector.fromBase58(addr)
+            head  <- bytes.headOption
             payload = bytes.tail.dropRight(4)
-            ans    <- if (bytes.takeRight(4) != Hasher[DoubleSha256].hash(bytes.dropRight(4)).bytes.take(4)) None
-                   else
-                     head match {
-                       case P2PKHMainNet => Some(P2PKH(MainNet, payload.decode_[Hash160]))
-                       case P2PKHTestNet => Some(P2PKH(TestNet, payload.decode_[Hash160]))
-                       case P2SHMainNet  => Some(P2SH(MainNet, payload.decode_[Hash160]))
-                       case P2SHTestNet  => Some(P2SH(TestNet, payload.decode_[Hash160]))
-                       case _            => None
-                     }
+            ans <-
+              if (bytes.takeRight(4) != Hasher[DoubleSha256].hash(bytes.dropRight(4)).bytes.take(4)) None
+              else
+                head match {
+                  case P2PKHMainNet => Some(P2PKH(MainNet, payload.decode_[Hash160]))
+                  case P2PKHTestNet => Some(P2PKH(TestNet, payload.decode_[Hash160]))
+                  case P2SHMainNet  => Some(P2SH(MainNet, payload.decode_[Hash160]))
+                  case P2SHTestNet  => Some(P2SH(TestNet, payload.decode_[Hash160]))
+                  case _            => None
+                }
           } yield ans,
           Err(s"Address $addr is an invalid Legacy Address")
         )

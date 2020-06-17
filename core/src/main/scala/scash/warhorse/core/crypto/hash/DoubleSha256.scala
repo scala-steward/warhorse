@@ -17,7 +17,7 @@ object DoubleSha256B {
     DoubleSha256.doubleSha256Serde.xmap(d => DoubleSha256B(d.b), d => DoubleSha256(d.b))
 }
 
-object DoubleSha256  {
+object DoubleSha256 {
   def toBigEndian(dsha256: DoubleSha256): DoubleSha256B = DoubleSha256B(dsha256.b.reverse)
 
   implicit val doubleSha256Serde: Serde[DoubleSha256] =

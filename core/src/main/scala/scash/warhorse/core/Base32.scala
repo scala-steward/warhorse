@@ -76,7 +76,7 @@ object Base32 {
     val versionByte = (vtype | hashSizeMap.indexOf(payload.size * 8)).toByte
     val bits        = (versionByte +: payload).bits
     val fraction    = bits.size % 5
-    val padding     =
+    val padding =
       if (fraction == 0) bits
       else bits.padRight(bits.size + 5 - fraction)
 

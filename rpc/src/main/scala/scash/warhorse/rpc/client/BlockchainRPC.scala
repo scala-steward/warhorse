@@ -12,7 +12,7 @@ trait BlockchainRPC {
   def getBestBlockHash: RIO[RpcClient, Result[DoubleSha256B]] =
     call[DoubleSha256B]("getbestblockhash")
 
-  def getBestBlock: RIO[RpcClient, Result[GetBlock]]                                                        =
+  def getBestBlock: RIO[RpcClient, Result[GetBlock]] =
     for {
       best  <- getBestBlockHash
       block <- getBlock(best.require)
@@ -22,14 +22,14 @@ trait BlockchainRPC {
    * Returns a `GetBlockResult` from the block <hash>, with a Vector of tx hashes inside the block
    * Equivalent to bitcoin-cli getblock <hash> 0`
    */
-  def getBlockRaw(headerHash: DoubleSha256B): RIO[RpcClient, Result[ByteVector]]                            =
+  def getBlockRaw(headerHash: DoubleSha256B): RIO[RpcClient, Result[ByteVector]] =
     getBlock[ByteVector](headerHash.hex, 0)
 
   /**
    * Returns a `GetBlockResult` from the block <hash>, with a Vector of tx hashes inside the block
    * Equivalent to bitcoin-cli getblock <hash> 1`
    */
-  def getBlock(headerHash: DoubleSha256B): RIO[RpcClient, Result[GetBlock]]                                 =
+  def getBlock(headerHash: DoubleSha256B): RIO[RpcClient, Result[GetBlock]] =
     getBlock[GetBlock](headerHash.hex, 1)
 
   /**

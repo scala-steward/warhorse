@@ -9,10 +9,10 @@ trait AddressGen {
   def p2pkh: Gen[Random, Address] =
     genp2pkhLoad.map { case (net, pubkey) => Address.p2pkh(net, pubkey) }
 
-  def p2sh: Gen[Random, Address]  =
+  def p2sh: Gen[Random, Address] =
     genp2shLoad.map { case (net, redeemScript) => Address.p2sh(net, redeemScript) }
 
-  private def genp2pkhLoad        =
+  private def genp2pkhLoad =
     for {
       net  <- netGenerator
       pkey <- pubkey

@@ -44,7 +44,7 @@ object RpcClient {
 
   private def response[A: Decoder] =
     asJsonAlways[RpcResponse[A]].map {
-      case Right(RpcResponse(Left(e), _))  =>
+      case Right(RpcResponse(Left(e), _)) =>
         Failure(Err.EffectError("Rpc", s"${RpcResponseError.error(e.code)}. ${e.message}"))
       case Right(RpcResponse(Right(a), _)) => Successful(a)
       case Left(e)                         => Failure(Err.ParseError("Json", s"parsing ${e.body} \n failed at: ${e.getMessage()}"))
@@ -64,10 +64,10 @@ object RpcClient {
   private implicit def rpcResponseDecoder[A: Decoder]: Decoder[RpcResponse[A]] =
     for {
       resp <- Decoder[Json].at("error").flatMap[Either[RpcResponseError, A]] {
-                case Json.Null => Decoder[A].at("result").map(Right(_))
-                case _         => Decoder[RpcResponseError].at("error").map(Left(_))
-              }
-      id   <- Decoder.decodeString.at("id")
+        case Json.Null => Decoder[A].at("result").map(Right(_))
+        case _         => Decoder[RpcResponseError].at("error").map(Left(_))
+      }
+      id <- Decoder.decodeString.at("id")
     } yield RpcResponse[A](resp, id)
 
   private implicit val rpcRequestEncoder: Encoder[RpcRequest] = deriveEncoder

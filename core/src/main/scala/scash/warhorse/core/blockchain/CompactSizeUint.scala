@@ -17,7 +17,7 @@ object CompactSizeUint {
 
   def apply(u: Uint32): CompactSizeUint = CompactSizeUint(Uint64(u.num))
 
-  def bytes                                       = {
+  def bytes = {
     val intCodec = compactSizeSerde.xmap(_.num.num.toInt, (i: Int) => CompactSizeUint(Uint64(i)))
     sVarSize(intCodec.codec, sbytes)
   }
@@ -30,24 +30,24 @@ object CompactSizeUint {
     Codec[CompactSizeUint](
       (n: CompactSizeUint) =>
         n.num match {
-          case i if i <= Uint8(252)    =>
+          case i if i <= Uint8(252) =>
             uint8L.encode(i.num.toInt)
           case i if i <= Uint32(65535) =>
             for {
               a <- uint8L.encode(0xfd)
               b <- uint16L.encode(i.num.toInt)
             } yield a ++ b
-          case i if (i <= Uint32.max)  =>
+          case i if (i <= Uint32.max) =>
             for {
               a <- uint8L.encode(0xfe)
               b <- uint32L.encode(i.num.toLong)
             } yield a ++ b
-          case i if i <= Uint64.max    =>
+          case i if i <= Uint64.max =>
             for {
               a <- uint8L.encode(0xff)
               b <- Successful(i.bits).toAttempt
             } yield a ++ b
-          case _                       => Failure(Err(s"${n.num} is too large to be parsed into CompactSizeUint")).toAttempt
+          case _ => Failure(Err(s"${n.num} is too large to be parsed into CompactSizeUint")).toAttempt
         },
       (buf: BitVector) =>
         uint8L
@@ -63,7 +63,7 @@ object CompactSizeUint {
                 uint32L.decode(byte.remainder).map(_.map(n => CompactSizeUint(Uint64(n))))
               case 0xfd =>
                 uint16L.decode(byte.remainder).map(_.map(n => CompactSizeUint(Uint64(n))))
-              case _    =>
+              case _ =>
                 Successful(scodec.DecodeResult(CompactSizeUint(Uint64(byte.value)), byte.remainder)).toAttempt
             }
           )

@@ -59,7 +59,7 @@ object BuildHelper {
           "-opt:l:inline",
           "-opt-inline-from:<source>"
         ) ++ stdOptsUpto212
-      case _             =>
+      case _ =>
         Seq("-Xexperimental") ++ stdOptsUpto212
     }
 
@@ -79,7 +79,7 @@ object BuildHelper {
       resolvers ++= Seq(Opts.resolver.sonatypeSnapshots, Resolver.bintrayRepo("scala-cash", "io")),
       libraryDependencies ++=
         Seq(
-          ("com.github.ghik"                % "silencer-lib"    % SilencerVersion % Provided)
+          ("com.github.ghik" % "silencer-lib" % SilencerVersion % Provided)
             .cross(CrossVersion.full),
           compilerPlugin(("com.github.ghik" % "silencer-plugin" % SilencerVersion).cross(CrossVersion.full)),
           compilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")

@@ -8,6 +8,6 @@ trait Show[A] {
   def decode(s: String): Result[A]
 }
 
-object Show   {
+object Show {
   def apply[A](implicit c: Show[A]) = c
 }

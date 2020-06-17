@@ -6,7 +6,7 @@ import scash.warhorse.core.crypto.hash.{ Hash160, Hasher }
 
 import scodec.bits.ByteVector
 
-sealed trait Address                                 extends Product with Serializable { self =>
+sealed trait Address extends Product with Serializable { self =>
   def toCashAddr: String   = CashAddr.addrShow.encode(self)
   def toLegacyAddr: String = LegacyAddr.addrShow.encode(self)
 }

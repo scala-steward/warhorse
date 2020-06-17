@@ -8,7 +8,7 @@ import scodec.{ Codec, DecodeResult }
 import scodec.bits.{ BitVector, ByteVector }
 import scodec.codecs._
 
-trait Serde[A]    {
+trait Serde[A] {
   def codec: Codec[A]
 
   def xmap[B](fa: A => B, fb: B => A): Serde[B] = Serde(codec.xmap(fa, fb))
@@ -31,7 +31,7 @@ trait Serde[A]    {
   def ||(or: Serde[A]): Serde[A] = orElse(or)
 }
 
-object Serde      {
+object Serde {
   def apply[A](implicit c: Serde[A]): Serde[A] = c
 
   def apply[A](
@@ -81,7 +81,7 @@ trait SerdeSyntax {
       }
 
     /** Returns the successful value if present; otherwise throws an `IllegalArgumentException` if decodeExact fails. */
-    def decodeExact_[A: Serde]: A        = decodeExact.require
+    def decodeExact_[A: Serde]: A = decodeExact.require
 
     def toBigInt: BigInt = BigInt(1, byteVector.toArray)
 
