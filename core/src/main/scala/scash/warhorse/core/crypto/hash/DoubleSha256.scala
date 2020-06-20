@@ -1,10 +1,8 @@
 package scash.warhorse.core.crypto.hash
 
 import org.bouncycastle.crypto.Digest
-
 import scash.warhorse.core.crypto.hash.Sha256.sha256Serde
-import scash.warhorse.core.typeclass.Serde
-
+import scash.warhorse.core.typeclass.{ Hasher, Serde }
 import scodec.bits.ByteVector
 
 case class DoubleSha256(private[crypto] val b: ByteVector)
@@ -17,7 +15,7 @@ object DoubleSha256B {
     DoubleSha256.doubleSha256Serde.xmap(d => DoubleSha256B(d.b), d => DoubleSha256(d.b))
 }
 
-object DoubleSha256  {
+object DoubleSha256 {
   def toBigEndian(dsha256: DoubleSha256): DoubleSha256B = DoubleSha256B(dsha256.b.reverse)
 
   implicit val doubleSha256Serde: Serde[DoubleSha256] =

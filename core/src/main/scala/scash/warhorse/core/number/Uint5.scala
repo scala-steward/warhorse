@@ -9,6 +9,8 @@ protected[warhorse] case class Uint5(num: Byte) extends AnyVal
 object Uint5 {
   def apply(i: Byte): Uint5 = new Uint5(verify(i)(zero, max))
 
+  def apply(i: Int): Uint5 = new Uint5(verify(i)(zero, max).toByte)
+
   def cast(i: Char): Uint5 = apply((i & 0x1f).toByte)
 
   val zero = new Uint5(0)
@@ -23,6 +25,6 @@ object Uint5 {
   implicit val vecUint5Serde = Serde(vector(uint5Serde.codec))
 
   implicit val uint5Numeric: CNumeric[Uint5] =
-    CNumeric[Uint5](0x1f, zero, max)(u => BigInt(u.num.toInt), b => apply(b.toByte))
+    CNumeric[Uint5](0x1f, zero, max)(u => BigInt(u.num.toInt), b => apply(b.toInt))
 
 }

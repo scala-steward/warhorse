@@ -4,7 +4,7 @@ import org.bouncycastle.crypto.Digest
 import org.bouncycastle.crypto.digests.SHA256Digest
 import scash.warhorse.Err
 import scash.warhorse.Result.{ Failure, Successful }
-import scash.warhorse.core.typeclass.Serde
+import scash.warhorse.core.typeclass.{ Hasher, Serde }
 import scodec.DecodeResult
 import scodec.bits.ByteVector
 
@@ -15,7 +15,7 @@ case class Sha256B(private[crypto] val b: ByteVector)
 object Sha256 {
   private val bsize = 32L
 
-  implicit val sha256Serde: Serde[Sha256]   = Serde[Sha256](
+  implicit val sha256Serde: Serde[Sha256] = Serde[Sha256](
     (a: Sha256) => Successful(a.b),
     (b: ByteVector) =>
       if (b.size >= bsize) Successful(DecodeResult(Sha256(b.take(bsize)), b.drop(bsize).bits))

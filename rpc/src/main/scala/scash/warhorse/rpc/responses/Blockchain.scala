@@ -49,7 +49,7 @@ case class GetBlockWithTransactions(
 )
 
 case class GetBlockChainInfo(
-  chain: String,     //TODO as NetworkParameters
+  chain: String, //TODO as NetworkParameters
   blocks: Int,
   headers: Int,
   bestblockhash: DoubleSha256B,

@@ -8,13 +8,13 @@ import zio.test._
 object BlockchainSpec extends DefaultRunnableSpec {
   val spec = suite("BlockchainSpec")(
     testM("GetBlock")(
-      assertM(parseJsonfromFile[GetBlock]("rpcblock.json"))(success[GetBlock])
+      assertM(jsonFromFile[GetBlock]("rpcblock.json"))(success[GetBlock])
     ),
     testM("GetBlockWithTransactions")(
-      assertM(parseJsonfromFile[GetBlockWithTransactions]("rpcblocktx.json"))(success[GetBlockWithTransactions])
+      assertM(jsonFromFile[GetBlockWithTransactions]("rpcblocktx.json"))(success[GetBlockWithTransactions])
     ),
     testM("GetBlockChainInfo")(
-      assertM(parseJsonfromFile[GetBlockChainInfo]("blockchaininfo.json"))(success[GetBlockChainInfo])
+      assertM(jsonFromFile[GetBlockChainInfo]("blockchaininfo.json"))(success[GetBlockChainInfo])
     ),
     test("GetBlockheader")(assert(parseJson[GetBlockHeader](blockheader))(success[GetBlockHeader])),
     test("ChainTips")(assert(parseJson[Vector[ChainTip]](chaintips))(success[Vector[ChainTip]]))

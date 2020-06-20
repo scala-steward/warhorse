@@ -4,7 +4,9 @@ import org.bouncycastle.crypto.Digest
 
 import scash.warhorse.Err
 import scash.warhorse.Result.{ Failure, Successful }
-import scash.warhorse.core.typeclass.Serde
+import scash.warhorse.core.typeclass.{ Hasher, Serde }
+import scash.warhorse.core._
+
 import scodec.DecodeResult
 import scodec.bits.ByteVector
 
@@ -20,8 +22,8 @@ object Hash160 {
   )
 
   implicit val hash160hash = new Hasher[Hash160] {
-    def cons(b: ByteVector): Hash160 = Hash160(Hasher[RipeMd160].hash(b).b)
-    def hasher: Digest               = Hasher[Sha256].hasher
+    def cons(bytes: ByteVector): Hash160 = Hash160(bytes.hash[RipeMd160].b)
+    def hasher: Digest                   = Hasher[Sha256].hasher
   }
 
   private val bsize = 20L

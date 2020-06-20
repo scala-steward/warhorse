@@ -49,7 +49,15 @@ object CNumericUtil {
   def mult[A: CNumeric](u1: A, u2: A) = {
     val expected = CNumeric[A].num(u1) * CNumeric[A].num(u2)
     if (inRange[A](expected)) assert(u1 * u2)(equalTo_(CNumeric[A].lift(expected)))
-    else assert(Try(u1 * u2).isFailure)(isTrue)
+    else {
+      if (Try(u1 * u2).isSuccess) {
+        Predef.println(u1)
+        Predef.println(u2)
+        Predef.println(CNumeric[A].num(u1).toByte * CNumeric[A].num(u2).toByte)
+        Predef.println(u1 * u2)
+      }
+      assert(Try(u1 * u2).isFailure)(isTrue)
+    }
   }
 
   def bitwiseInclusive[A: CNumeric](u1: A, u2: A) =

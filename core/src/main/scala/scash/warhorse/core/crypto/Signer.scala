@@ -9,6 +9,6 @@ trait Signer[A] {
   def verify(msg: ByteVector, sig: ByteVector, pubkey: PublicKey): Result[Boolean]
 }
 
-object Signer   {
+object Signer {
   def apply[A](implicit signer: Signer[A]): Signer[A] = signer
 }

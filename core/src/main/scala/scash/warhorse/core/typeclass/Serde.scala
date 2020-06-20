@@ -2,13 +2,13 @@ package scash.warhorse.core.typeclass
 
 import java.math.BigInteger
 
-import scash.warhorse.{ Err, Result }
-import scash.warhorse.Result.{ Failure, Successful }
+import scash.warhorse.Result
+import scash.warhorse.core._
 import scodec.{ Codec, DecodeResult }
 import scodec.bits.{ BitVector, ByteVector }
 import scodec.codecs._
 
-trait Serde[A]    {
+trait Serde[A] {
   def codec: Codec[A]
 
   def xmap[B](fa: A => B, fb: B => A): Serde[B] = Serde(codec.xmap(fa, fb))
@@ -31,7 +31,7 @@ trait Serde[A]    {
   def ||(or: Serde[A]): Serde[A] = orElse(or)
 }
 
-object Serde      {
+object Serde {
   def apply[A](implicit c: Serde[A]): Serde[A] = c
 
   def apply[A](
@@ -58,34 +58,11 @@ trait SerdeSyntax {
     def hex: String              = bytes.toHex
     def toArray: Array[Byte]     = bytes.toArray
     def toBigInteger: BigInteger = bytes.toBigInteger
+    def hash[A: Hasher]          = Hasher[A].hash(a)
   }
 
   implicit class BitVectorOps(bitVector: BitVector) {
     def decode[A: Serde]: Result[A] = Result.fromAttempt(Serde[A].codec.decodeValue(bitVector))
     def decode_[A: Serde]: A        = decode.require
-  }
-
-  implicit class ByteVectorOps(byteVector: ByteVector) {
-
-    /** Returns the successful value if present; otherwise throws an `IllegalArgumentException`. */
-    def decode_[A: Serde]: A = decode.require
-
-    /** Returns the Successful[A] if decoding was successful. otherwise `Failure(cause)` */
-    def decode[A: Serde]: Result[A] = Serde[A].decodeValue(byteVector)
-
-    /** Decode Bytevector into type `Result[A]`. if there are remainder bytes it will return Failure */
-    def decodeExact[A: Serde]: Result[A] =
-      Serde[A].decode(byteVector).flatMap { a =>
-        if (a.remainder.isEmpty) Successful(a.value)
-        else Failure(Err(s"Decoding left remainder bits: ${a.remainder.toByteVector.size}"))
-      }
-
-    /** Returns the successful value if present; otherwise throws an `IllegalArgumentException` if decodeExact fails. */
-    def decodeExact_[A: Serde]: A        = decodeExact.require
-
-    def toBigInt: BigInt = BigInt(1, byteVector.toArray)
-
-    def toBigInteger: BigInteger = new BigInteger(1, byteVector.toArray)
-
   }
 }

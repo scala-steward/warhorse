@@ -55,7 +55,7 @@ trait RpcTransactionDecoders {
   implicit val rpcScriptPubKeyDecoder: Decoder[RpcScriptPubKey]           = deriveDecoder
   implicit val rpcTransactionOutputDecoder: Decoder[RpcTransactionOutput] = deriveDecoder
   implicit val rpcScriptSigDecoder: Decoder[RpcScriptSig]                 = deriveDecoder
-  implicit val rpcTransactionInput: Decoder[RpcTransactionInput]          =
+  implicit val rpcTransactionInput: Decoder[RpcTransactionInput] =
     Decoder[RpcTInput].widen or Decoder[RpcCoinbaseInput].widen
-  implicit val rpcTransaction: Decoder[RpcTransaction]                    = deriveDecoder
+  implicit val rpcTransaction: Decoder[RpcTransaction] = deriveDecoder
 }

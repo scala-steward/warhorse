@@ -17,23 +17,21 @@ object RipeMd160Spec extends DefaultRunnableSpec {
       }
     ),
     testM("Compare")(
-      check(Gen.anyString)(msg =>
-        assert(Hasher[RipeMd160].hash(msg))(equalTo(Hasher[RipeMd160].hash(ByteVector.view(msg.getBytes))))
-      )
+      check(Gen.anyString)(msg => assert(msg.hash[RipeMd160])(equalTo(ByteVector.view(msg.getBytes).hash[RipeMd160])))
     ),
     suite("Deterministic")(
       test("0")(
-        assert(Hasher[RipeMd160].hash("0").bytes)(
+        assert("0".hash[RipeMd160].bytes)(
           equalTo(ByteVector.fromValidHex("0xba5ed015715da74cf1e87230ba73d4855edaf6f6"))
         )
       ),
       test("empty str")(
-        assert(Hasher[RipeMd160].hash("").bytes)(
+        assert("".hash[RipeMd160].bytes)(
           equalTo(ByteVector.fromValidHex("0x9c1185a5c5e9fc54612808977ee8f548b2258d31"))
         )
       ),
       test("message")(
-        assert(Hasher[RipeMd160].hash("very deterministic message").bytes)(
+        assert("very deterministic message".hash[RipeMd160].bytes)(
           equalTo(ByteVector.fromValidHex("0xbfbe0bd1d23b43b2cbaaf3f3c4ab40f9f34c20ef"))
         )
       )

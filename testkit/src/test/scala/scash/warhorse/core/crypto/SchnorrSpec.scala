@@ -5,9 +5,8 @@ import io.circe.Decoder
 import org.scash.secp256k1
 
 import zio.test.DefaultRunnableSpec
-import zio.test._
-import zio.ZIO
 import zio.test.Assertion.isTrue
+import zio.test._
 
 import scodec.bits._
 
@@ -47,24 +46,20 @@ object SchnorrSpec extends DefaultRunnableSpec {
     },
     testM("edge cases") {
       // dataset https://github.com/Bitcoin-ABC/bitcoin-abc/blob/master/src/secp256k1/src/modules/schnorr/tests_impl.h
-      parseJsonfromFile[List[TestVectorSchnorr]]("schnorr.json")
-        .flatMap(r =>
-          ZIO.foreach(r.require) { data =>
-            val ver = for {
-              pub <- PublicKey(data.pubkey)
-              ver <- crypto.verify[Schnorr](data.data, data.sig, pub)
-            } yield ver
-            ZIO.succeed(assert(ver)(success(data.exp)))
-          }
-        )
-        .map(BoolAlgebra.collectAll(_).get)
+      jsonFromCSV[TestVectorSchnorr]("schnorr.json") { data =>
+        val ver = for {
+          pub <- PublicKey(data.pubkey)
+          ver <- crypto.verify[Schnorr](data.data, data.sig, pub)
+        } yield ver
+        assert(ver)(success(data.exp))
+      }
     },
     test("deterministic") {
       val data = hex"5255683DA567900BFD3E786ED8836A4E7763C221BF1AC20ECE2A5171B9199E8A"
       val sec  = hex"12B004FFF7F4B69EF8650E767F18F11EDE158148B425660723B9F9A66E61F747"
-      val exp  =
+      val exp =
         hex"2C56731AC2F7A7E7F11518FC7722A166B02438924CA9D8B4D111347B81D0717571846DE67AD3D913A8FDF9D8F3F73161A4C48AE81CB183B214765FEB86E255CE"
-      val ans  = for {
+      val ans = for {
         priv <- PrivateKey(sec)
         pub  <- priv.genPublicKeyCompressed
         sig  <- crypto.sign[Schnorr](data, priv)
@@ -90,15 +85,13 @@ object SchnorrSpec extends DefaultRunnableSpec {
 
   case class TestVectorSchnorr(data: ByteVector, sig: ByteVector, pubkey: ByteVector, exp: Boolean, comment: String)
 
-  implicit val ecdsaDecoder: Decoder[List[TestVectorSchnorr]] = csvDecoder.map(dataset =>
-    dataset.map { data =>
-      TestVectorSchnorr(
-        ByteVector.fromValidHex(data(0)),
-        ByteVector.fromValidHex(data(1)),
-        ByteVector.fromValidHex(data(2)),
-        data(3).toBoolean,
-        data(4)
-      )
-    }
+  implicit val ecdsaDecoder: Decoder[TestVectorSchnorr] = rowCoder(data =>
+    TestVectorSchnorr(
+      ByteVector.fromValidHex(data(0)),
+      ByteVector.fromValidHex(data(1)),
+      ByteVector.fromValidHex(data(2)),
+      data(3).toBoolean,
+      data(4)
+    )
   )
 }

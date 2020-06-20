@@ -83,22 +83,22 @@ object Result {
   def failure[A](err: Err): Result[A] = Failure(err)
 
   /** Creates a successful attempt if the condition succeeds otherwise create a unsuccessful attempt. */
-  def guard(condition: => Boolean, err: String): Result[Unit]     =
+  def guard(condition: => Boolean, err: String): Result[Unit] =
     if (condition) successful(()) else failure(Err(err))
 
   /** Creates a successful attempt if the condition succeeds otherwise create a unsuccessful attempt. */
-  def guard(condition: => Boolean, err: => Err): Result[Unit]     =
+  def guard(condition: => Boolean, err: => Err): Result[Unit] =
     if (condition) successful(()) else failure(err)
 
   /** Creates a attempt from a try. */
-  def fromTry[A](t: Try[A]): Result[A]                            =
+  def fromTry[A](t: Try[A]): Result[A] =
     t match {
       case scala.util.Success(value)        => successful(value)
       case scala.util.Failure(NonFatal(ex)) => failure(Err(ex.getMessage))
     }
 
   /** Creates an attempt from the supplied option. The `ifNone` value is used as the error message if `opt` is `None`. */
-  def fromOption[A](opt: Option[A], ifNone: => Err): Result[A]    =
+  def fromOption[A](opt: Option[A], ifNone: => Err): Result[A] =
     opt.fold(failure[A](ifNone))(successful)
 
   /** Creates an attempt from the supplied option. The `ifNone` value is used as the success value if `opt` is `None`. */
@@ -106,7 +106,7 @@ object Result {
     opt.fold(successful(ifNone))(failure)
 
   /** Creates an attempt from the supplied either. */
-  def fromEither[A](e: Either[String, A]): Result[A]              =
+  def fromEither[A](e: Either[String, A]): Result[A] =
     e.fold(err => failure(Err(err)), successful)
 
   def fromAttempt[A](a: Attempt[A]): Result[A] =
@@ -123,9 +123,9 @@ object Result {
 
   /** Successful attempt. */
   final case class Successful[A](value: A) extends Result[A] {
-    def map[B](f: A => B): Result[B]                                       = Successful(f(value))
-    def mapErr(f: Err => Err): Result[A]                                   = this
-    def flatMap[B](f: A => Result[B]): Result[B]                           = f(value)
+    def map[B](f: A => B): Result[B]             = Successful(f(value))
+    def mapErr(f: Err => Err): Result[A]         = this
+    def flatMap[B](f: A => Result[B]): Result[B] = f(value)
     //def flatten[B](implicit ev: A <:< Result[B]): Result[B]                = value
     def fold[B](ifFailure: Err => B, ifSuccessful: A => B): B              = ifSuccessful(value)
     def getOrElse[B >: A](default: => B): B                                = value
@@ -141,24 +141,24 @@ object Result {
 
   /** Failed attempt. */
   final case class Failure(cause: Err) extends Result[Nothing] {
-    def map[B](f: Nothing => B): Result[B]                                       = this
-    def mapErr(f: Err => Err): Result[Nothing]                                   = Failure(f(cause))
-    def flatMap[B](f: Nothing => Result[B]): Result[B]                           = this
+    def map[B](f: Nothing => B): Result[B]             = this
+    def mapErr(f: Err => Err): Result[Nothing]         = Failure(f(cause))
+    def flatMap[B](f: Nothing => Result[B]): Result[B] = this
     //def flatten[B](implicit ev: Nothing <:< Result[B]): Result[B]   = this
-    def fold[B](ifFailure: Err => B, ifSuccessful: Nothing => B): B              = ifFailure(cause)
-    def getOrElse[B >: Nothing](default: => B): B                                = default
-    def orElse[B >: Nothing](fallback: => Result[B])                             = fallback
-    def recover[B >: Nothing](f: PartialFunction[Err, B]): Result[B]             =
+    def fold[B](ifFailure: Err => B, ifSuccessful: Nothing => B): B = ifFailure(cause)
+    def getOrElse[B >: Nothing](default: => B): B                   = default
+    def orElse[B >: Nothing](fallback: => Result[B])                = fallback
+    def recover[B >: Nothing](f: PartialFunction[Err, B]): Result[B] =
       if (f.isDefinedAt(cause)) Result.successful(f(cause))
       else this
     def recoverWith[B >: Nothing](f: PartialFunction[Err, Result[B]]): Result[B] =
       if (f.isDefinedAt(cause)) f(cause)
       else this
-    def require: Nothing                                                         = throw new IllegalArgumentException(cause.message)
-    def isSuccessful: Boolean                                                    = false
-    def toOption: None.type                                                      = None
-    def toEither: Left[Err, Nothing]                                             = Left(cause)
-    def toTry: Try[Nothing]                                                      =
+    def require: Nothing             = throw new IllegalArgumentException(cause.message)
+    def isSuccessful: Boolean        = false
+    def toOption: None.type          = None
+    def toEither: Left[Err, Nothing] = Left(cause)
+    def toTry: Try[Nothing] =
       scala.util.Failure(new Exception(s"Error occurred: ${cause.message}"))
   }
 }
