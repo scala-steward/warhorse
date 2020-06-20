@@ -17,7 +17,7 @@ object CashAddr {
   val P2SHbyte = 0x08.toByte
 
   val cashAddrShowNet = new Show[Net] {
-    def decode(s: String): Result[Net] =
+    def parse(s: String): Result[Net] =
       s match {
         case "bitcoincash" => Successful(MainNet)
         case "bchtest"     => Successful(TestNet)
@@ -25,7 +25,7 @@ object CashAddr {
         case _             => Failure(Err(s"$s is not a valid net"))
       }
 
-    def encode(a: Net): String =
+    def show(a: Net): String =
       a match {
         case MainNet => "bitcoincash"
         case TestNet => "bchtest"
@@ -34,18 +34,18 @@ object CashAddr {
   }
 
   val addrShow = new Show[Address] {
-    def decode(addr: String): Result[Address] =
+    def parse(addr: String): Result[Address] =
       for {
         netpay  <- split(addr)
-        net     <- cashAddrShowNet.decode(netpay._1)
+        net     <- cashAddrShowNet.parse(netpay._1)
         payload <- Base32.fromBase32(netpay._1, netpay._2)
         ans     <- toAddress(net, payload)
       } yield ans
 
-    def encode(a: Address): String =
+    def show(a: Address): String =
       a match {
-        case P2PKH(net, pkHash) => Base32.toBase32(cashAddrShowNet.encode(net), P2KHbyte, pkHash.bytes)
-        case P2SH(net, rsHash)  => Base32.toBase32(cashAddrShowNet.encode(net), P2SHbyte, rsHash.bytes)
+        case P2PKH(net, pkHash) => Base32.toBase32(cashAddrShowNet.show(net), P2KHbyte, pkHash.bytes)
+        case P2SH(net, rsHash)  => Base32.toBase32(cashAddrShowNet.show(net), P2SHbyte, rsHash.bytes)
       }
   }
 

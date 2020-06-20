@@ -24,7 +24,7 @@ object LegacyAddr {
       (bytes ++ checksum).toBase58
     }
 
-    def encode(address: Address): String =
+    def show(address: Address): String =
       address match {
         case P2PKH(MainNet, pubKeyHash)      => cons(P2PKHMainNet, pubKeyHash)
         case P2PKH(_, pubKeyHash)            => cons(P2PKHTestNet, pubKeyHash)
@@ -32,7 +32,7 @@ object LegacyAddr {
         case P2SH(_, redeemScriptHash)       => cons(P2SHTestNet, redeemScriptHash)
       }
 
-    def decode(addr: String): Result[Address] =
+    def parse(addr: String): Result[Address] =
       if (addr.length < 26 || addr.length > 35)
         Failure(Err.BoundsError("Address", "26 <= addr.length <= 35 s", addr.length.toString))
       else

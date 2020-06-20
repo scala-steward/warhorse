@@ -6,7 +6,7 @@ import scash.warhorse.Result.{ Failure, Successful }
 import scash.warhorse.core.typeclass._
 import scodec.bits.ByteVector
 
-package object core extends SerdeSyntax with CNumericSyntax {
+package object core extends SerdeSyntax with CNumericSyntax with ShowSyntax {
   import scala.{ Predef => P }
 
   implicit val bigInt64Numeric: CNumeric[BigInt] =
@@ -61,6 +61,8 @@ package object core extends SerdeSyntax with CNumericSyntax {
 
   implicit class StringOps(str: String) {
     def hash[A: Hasher]: A = Hasher[A].hash(str)
+
+    def parse[A: Show]: Result[A] = Show[A].parse(str)
   }
 
   implicit class ByteVectorOps(byteVector: ByteVector) {
