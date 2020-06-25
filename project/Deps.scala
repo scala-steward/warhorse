@@ -6,8 +6,9 @@ object Deps {
     val circe        = "0.13.0"
     val scodec       = "1.11.7"
     val scodecbits   = "1.1.17"
+
     val sttp         = "2.1.5"
-    val zio          = "1.0.0-RC19-2"
+    val zio          = "1.0.0-RC21"
     val ziosecp256k1 = "0.1.5"
   }
 

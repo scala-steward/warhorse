@@ -21,8 +21,7 @@ object Uint32 {
   val one  = new Uint32(1)
   val max  = new Uint32(4294967295L)
 
-  implicit val uint32Serde: Serde[Uint32] =
-    Serde[Uint32](uint32L.xmap[Uint32](apply(_), _.num))
+  implicit val uint32Serde: Serde[Uint32] = Serde[Uint32](uint32L.as[Uint32])
 
   implicit val uint32Numeric: CNumeric[Uint32] =
     CNumeric[Uint32](0xffffffffL, min, max)(_.num, apply(_))

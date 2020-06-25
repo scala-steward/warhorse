@@ -21,7 +21,7 @@ object Uint8 {
   val max = new Uint8(255)
 
   implicit val uint8Serde: Serde[Uint8] =
-    Serde[Uint8](uint8L.xmap[Uint8](apply(_), _.num))
+    Serde[Uint8](uint8L.as[Uint8])
 
   implicit val uint8Numeric: CNumeric[Uint8] =
     CNumeric[Uint8](0xff, min, max)(_.num, apply(_))

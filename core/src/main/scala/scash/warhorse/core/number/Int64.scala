@@ -19,8 +19,7 @@ object Int64 {
   val one  = new Int64(1)
   val max  = new Int64(9223372036854775807L)
 
-  implicit val int64Serde: Serde[Int64] =
-    Serde[Int64](int64L.xmap[Int64](apply(_), _.num))
+  implicit val int64Serde: Serde[Int64] = Serde[Int64](int64L.as[Int64])
 
   implicit val int64Numeric: CNumeric[Int64] =
     CNumeric[Int64](0xffffffffffffffffL, min, max)(_.num, apply(_))

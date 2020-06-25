@@ -17,8 +17,7 @@ object Int32 {
   val one  = new Int32(1)
   val max  = new Int32(2147483647)
 
-  implicit val int32Serde: Serde[Int32] =
-    Serde[Int32](int32L.xmap[Int32](apply(_), _.num))
+  implicit val int32Serde: Serde[Int32] = Serde(int32L.as[Int32])
 
   implicit val int32Numeric: CNumeric[Int32] =
     CNumeric[Int32](0xffffffff, min, max)(_.num, apply(_))
