@@ -3,7 +3,7 @@ import sbt._
 object Deps {
   object V {
     val bouncyCastle = "1.65.01"
-    val circe        = "0.13.0"
+    val circe        = "0.14.1"
     val scodec       = "1.11.7"
     val scodecbits   = "1.1.17"
 
