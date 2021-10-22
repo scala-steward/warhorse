@@ -4,7 +4,7 @@ object Deps {
   object V {
     val bouncyCastle = "1.65.01"
     val circe        = "0.13.0"
-    val scodec       = "1.11.7"
+    val scodec       = "1.11.9"
     val scodecbits   = "1.1.17"
 
     val sttp         = "2.1.5"
